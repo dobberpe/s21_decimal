@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define min(X, Y) ((X) < (Y) ? (X) : (Y))
 #define max(X, Y) ((X) > (Y) ? (X) : (Y))
@@ -46,5 +47,19 @@ int ulen(unsigned d);
 char *raise_power_of_2(char *str, int n);
 char *stradd(char *l_str, char *r_str);
 char *add_width(char *str, int num, char value, bool right_alignment);
+
+// общие функции
+int get_bit(s21_decimal dec, int pos);
+void set_bit(s21_decimal *dec, int pos, int bit);
+int get_exp(s21_decimal dec);
+void set_exp(s21_decimal *dec, int exp);
+int get_sign(s21_decimal dec);
+void set_sign(s21_decimal *dec, int sign);
+int mantiss_sum(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift);
+int mantiss_multiply(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+void clear_decimal(s21_decimal *dec);
+int mantiss_prev_nulls(s21_decimal dec);
+
 
 #endif

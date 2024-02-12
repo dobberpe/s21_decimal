@@ -2,6 +2,14 @@
 
 #include <stdio.h>
 
+// Возвращет количество предстоящих нулей в мантиссе
+int mantiss_prev_nulls(s21_decimal dec) {
+    int i = 95;
+    for (; i >= 0 && !get_bit(dec, i); i--);
+    return 95 - i; 
+}
+
+// Установливает все биты decimal в 0
 void clear_decimal(s21_decimal *dec) {
     for (int i = 0; i < 4; i++) dec->bits[i] = 0;
 }
@@ -116,18 +124,27 @@ int main() {
     s21_decimal dec1 = {0};
     s21_decimal dec2 = {0};
     s21_decimal res = {0};
-    set_exp(&dec1, 4);
+    set_exp(&dec1, 0);
     set_exp(&dec2, 1);
-    dec1.bits[0] = 951231;
+    dec1.bits[2] = 0b11111111111111111111111111111111;
+    dec1.bits[1] = 0b11111111111111111111111111111111;
+    dec1.bits[0] = 0b11111111111111111111111111111111;
     dec2.bits[0] = 1222;
+    // dec1.bits[1] = 1;
+    // dec2.bits[1] = 1;
+    // dec1.bits[2] = 1;
+    // dec2.bits[2] = 1;
+    printf("%d\n", mantiss_prev_nulls(dec1));
+    printf("%s\n", dectostr(dec1));
+    printf("%s\n", dectostr(dec2));
     // mantiss_sum(dec1, dec2, &res);
     // mantiss_multiply(res, dec2, &res);
-    s21_add(dec1, dec2, &res);
-    printf("%d\n", res.bits[0]);
-    printf("%d\n", get_exp(res));
+    // s21_add(dec1, dec2, &res);
+    // printf("%d\n", get_exp(res));
+
+    // printf("%s\n", dectostr(res));
 
     // set_exp(&res, 10);
     // printf("%d\n", get_exp(res));
-
     return 0;
 }
