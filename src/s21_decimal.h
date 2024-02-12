@@ -44,7 +44,7 @@ int s21_truncate(s21_decimal value, s21_decimal *result);
 int s21_negate(s21_decimal value, s21_decimal *result);
 
 // конвертер в строку
-char* dectostr(s21_decimal *dec);
+char* dectostr(const s21_decimal *dec);
 int extract_exp(const unsigned bits);
 char *calculate_decimal(char *str, const unsigned *bits);
 char *utoa(unsigned d);
