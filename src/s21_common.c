@@ -65,6 +65,7 @@ int mantiss_compare(s21_decimal value_1, s21_decimal value_2) {
 
 // Сдвиг мантиссы, пока что только влево
 int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift) {
+    clear_decimal(result);
     int overflow = 0;
     for (int i = 95; i > 95 - shift; i--) {
         if (get_bit(dec, i)) overflow = 1;
@@ -72,8 +73,6 @@ int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift) {
     if (!overflow) {
         for (int i = 95; i >= shift; i--)
             set_bit(result, i, get_bit(dec, i - shift));
-        for (int i = shift - 1; i >= 0; i--)
-            set_bit(result, i, 0);
     }
     return overflow;
 }
@@ -92,10 +91,24 @@ int mantiss_multiply(s21_decimal value_1, s21_decimal value_2, s21_decimal *resu
     return overflow;
 }
 
-// Деление мантисс, мантисса value_1 >= value_2
-int mantiss_devision(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    
+// Деление мантисс остатком, мантисса value_2 != 0, возвращает остаток от деления
+s21_decimal mantiss_devision(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    clear_decimal(result);
+    while (mantiss_compare(value_1, value_2) != -1) {
+        int shift = 0;
+        s21_decimal tmp = {0};
+        while (mantiss_compare(value_1, tmp) != -1)
+            mantiss_shift(value_2, &tmp, shift++);
+        s21_decimal add = {0};
+        add.bits[0] = 1;
+        mantiss_shift(add, &add, (shift - 2));
+        mantiss_sum(*result, add, result);
+        mantiss_shift(value_2, &tmp, (shift - 2));
+        mantiss_sub(value_1, tmp, &value_1);
+    }
+    return value_1;
 }
+
 
 // Установить экспоненту: exp = 0-28
 void set_exp(s21_decimal *dec, int exp) {
@@ -156,12 +169,15 @@ int main() {
     // set_exp(&dec2, 1);
     // dec1.bits[2] = 0b11111111111111111111111111111111;
     // dec1.bits[1] = 0b11111111111111111111111111111111;
-    dec1.bits[0] = 123;
-    dec2.bits[0] = 123;
-    dec1.bits[2] = 123;
-    dec2.bits[2] = 123;
-    
-    printf("%d\n", mantiss_compare(dec1, dec2));
+    dec1.bits[0] = 129;
+    dec2.bits[0] = 129;
+    // dec1.bits[2] = 2;
+    // dec2.bits[2] = 123;
+    dec1 = mantiss_devision(dec1, dec2, &res);
+    printf("%d\n", res.bits[0]);
+    printf("%d\n", dec1.bits[0]);
+
+    // printf("%d\n", mantiss_compare(dec1, dec2));
     // dec1.bits[1] = 1;
     // dec2.bits[1] = 1;
     // dec1.bits[2] = 1;

@@ -68,7 +68,7 @@ void set_sign(s21_decimal *dec, int sign);
 int mantiss_sum(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 void mantiss_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int mantiss_multiply(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
-int mantiss_devision(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+s21_decimal mantiss_devision(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift);
 int mantiss_compare(s21_decimal value_1, s21_decimal value_2);
 int mantiss_prev_nulls(s21_decimal dec);
