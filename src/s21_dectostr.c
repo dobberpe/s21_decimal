@@ -1,13 +1,13 @@
 #include "s21_decimal.h"
 #include <math.h>
 
-char* dectostr(s21_decimal dec) {
-    s21_bits_4 sign_and_exp = {dec.bits[3]};
+char* dectostr(const s21_decimal *dec) {
+    s21_bits_4 sign_and_exp = {dec->bits[3]};
     bool negative = sign_and_exp.bits[3];
     int e = sign_and_exp.bits[2];
     char *str = utoa(0);
 
-    str = calculate_decimal(str, dec.bits);
+    str = calculate_decimal(str, dec->bits);
     
     if (negative || e) {
         if (strlen(str) <= e) str = add_width(str, e - strlen(str) + 1, '0', true);
