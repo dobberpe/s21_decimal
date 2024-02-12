@@ -40,6 +40,29 @@ int mantiss_sum(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     return overflow;
 }
 
+// Разность мантисс, мантисса value_1 >= value_2
+void mantiss_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    clear_decimal(result);
+    for (int i = 0; i < 96; i++) {
+        int bit_1 = get_bit(value_1, i);
+        int bit_2 = get_bit(value_2, i);
+        set_bit(result, i, bit_1 ^ bit_2);
+        if (bit_1 < bit_2) {
+            int j = 1;
+            while (!get_bit(value_1, i + j)) set_bit(&value_1, i + j++, 1);
+            set_bit(&value_1, i + j, 0);
+        }
+    }
+}
+
+// Сравнение мантисс, возвращает: 1 - первая больше, 0 - равны, -1 - вторая больше
+int mantiss_compare(s21_decimal value_1, s21_decimal value_2) {
+    int result = 0, i = 96;
+    while (!result && i--)
+        result = get_bit(value_1, i) - get_bit(value_2, i);
+    return result;
+}
+
 // Сдвиг мантиссы, пока что только влево
 int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift) {
     int overflow = 0;
@@ -67,6 +90,11 @@ int mantiss_multiply(s21_decimal value_1, s21_decimal value_2, s21_decimal *resu
         }
     }
     return overflow;
+}
+
+// Деление мантисс, мантисса value_1 >= value_2
+int mantiss_devision(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    
 }
 
 // Установить экспоненту: exp = 0-28
@@ -106,7 +134,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int exp_1 = get_exp(value_1);
     int exp_2 = get_exp(value_2);
     int diff = exp_2 - exp_1;
-    if (diff) {
+    if (diff <= mantiss_prev_nulls(value_1)) {
         s21_decimal tmp = {0}, ten = {0};
         tmp.bits[0] = 1;
         ten.bits[0] = 10;
@@ -124,25 +152,31 @@ int main() {
     s21_decimal dec1 = {0};
     s21_decimal dec2 = {0};
     s21_decimal res = {0};
-    set_exp(&dec1, 0);
-    set_exp(&dec2, 1);
-    dec1.bits[2] = 0b11111111111111111111111111111111;
-    dec1.bits[1] = 0b11111111111111111111111111111111;
-    dec1.bits[0] = 0b11111111111111111111111111111111;
-    dec2.bits[0] = 1222;
+    // set_exp(&dec1, 4);
+    // set_exp(&dec2, 1);
+    // dec1.bits[2] = 0b11111111111111111111111111111111;
+    // dec1.bits[1] = 0b11111111111111111111111111111111;
+    dec1.bits[0] = 123;
+    dec2.bits[0] = 123;
+    dec1.bits[2] = 123;
+    dec2.bits[2] = 123;
+    
+    printf("%d\n", mantiss_compare(dec1, dec2));
     // dec1.bits[1] = 1;
     // dec2.bits[1] = 1;
     // dec1.bits[2] = 1;
     // dec2.bits[2] = 1;
-    printf("%d\n", mantiss_prev_nulls(dec1));
-    printf("%s\n", dectostr(dec1));
-    printf("%s\n", dectostr(dec2));
+    // printf("%d\n", )
+    // printf("%d\n", mantiss_prev_nulls(dec1));
+    // printf("%s\n", dectostr(dec1));
+    // printf("%s\n", dectostr(dec2));
     // mantiss_sum(dec1, dec2, &res);
     // mantiss_multiply(res, dec2, &res);
     // s21_add(dec1, dec2, &res);
     // printf("%d\n", get_exp(res));
-
+    // mantiss_sub(dec1, dec2, &res);
     // printf("%s\n", dectostr(res));
+    // printf("%d\n", res.bits[0]);
 
     // set_exp(&res, 10);
     // printf("%d\n", get_exp(res));
