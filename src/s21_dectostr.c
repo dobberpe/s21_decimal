@@ -9,6 +9,7 @@ char* dectostr(s21_decimal dec) {
     str = calculate_decimal(str, dec.bits);
     
     if (negative || e) {
+        if (strlen(str) <= e) str = add_width(str, e - strlen(str) + 1, '0', true);
         int i = strlen(str) + negative + (bool)e;
         str = (char*)realloc(str, (i + 1) * sizeof(char));
         
