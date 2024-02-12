@@ -2,8 +2,9 @@
 #include <math.h>
 
 char* dectostr(s21_decimal dec) {
-    bool negative = dec.bits[3] & 0x80000000;
-    int e = extract_exp(dec.bits[3]);
+    s21_bits_4 sign_and_exp = {dec.bits[3]};
+    bool negative = sign_and_exp.bits[3];
+    int e = sign_and_exp.bits[2];
     char *str = utoa(0);
 
     str = calculate_decimal(str, dec.bits);
