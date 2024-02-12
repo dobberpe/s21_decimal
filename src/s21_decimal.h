@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define min(X, Y) ((X) < (Y) ? (X) : (Y))
+#define max(X, Y) ((X) > (Y) ? (X) : (Y))
+
 typedef struct {
     unsigned bits[4];
 } s21_decimal;

@@ -7,8 +7,28 @@ char* dectostr(s21_decimal dec) {
     char *str = utoa(0);
 
     str = calculate_decimal(str, dec.bits);
+    
+    if (negative || e) {
+        int i = strlen(str) + negative + (bool)e;
+        str = (char*)realloc(str, (i + 1) * sizeof(char));
+        
+        str[i] = '\0';
+        if (e) {
+            while (e) {
+                --i;
+                str[i] = str[i - negative - (bool)e--];
+            }
+            str[--i] = '.';
+        }
+        if (negative) {
+            while (--i) {
+                str[i] = str[i - 1];
+            }
+            str[i] = '-';
+        }
+    }
 
-    return res;
+    return str;
 }
 
 int extract_exp(const unsigned bits) {
@@ -25,18 +45,18 @@ int extract_exp(const unsigned bits) {
 }
 
 char *calculate_decimal(char *str, const unsigned *bits) {
-    int i = 3;
+    int i = -1;
     unsigned mask = 1;
     int power = 0;
     char *power_of_2 = utoa(1);
     int prev_p = 0;
 
-    while (--i >= 0) {
+    while (++i < 3) {
         while (mask) {
             if (bits[i] & mask) {
-                char *addendum = raise_power_of_2(*power_of_2, p - prev_p + 1);
+                char *addendum = raise_power_of_2(power_of_2, power - prev_p + 1);
                 power_of_2 = addendum;
-                prev_p = p;
+                prev_p = power;
                 char *tmp = str;
                 str = stradd(str, addendum);
                 free(tmp);
@@ -83,20 +103,16 @@ char *raise_power_of_2(char *str, int n) {
 }
 
 char *stradd(char *l_str, char *r_str) {
-    int i = strlen(l_str) - 1;
-    int j = strlen(r_str) - 1;
-    int k = max(i, j) - 1;
+    int i = strlen(l_str);
+    int j = strlen(r_str);
+    int k = max(i, j);
     char *res = (char *)calloc(k + 1, sizeof(char));
     bool overflow = false;
 
     while (--k >= 0) {
-        res[k] = (i >= 0 && i < l_len && j >= 0 && j < r_len ? -48 : 0) +
-                 (i >= 0 && i < l_len ? l_str[i] : 0) +
-                 (j >= 0 && j < r_len ? r_str[j] : 0) + overflow;
+        res[k] = (i && j ? -48 : 0) + (i ? l_str[--i] : 0) + (j ? r_str[--j] : 0) + overflow;
         overflow = res[k] > 57;
         res[k] -= res[k] > 57 ? 10 : 0;
-        --i;
-        --j;
     }
     res = overflow ? add_width(res, 1, '1', true) : res;
 
@@ -104,7 +120,7 @@ char *stradd(char *l_str, char *r_str) {
 }
 
 char *add_width(char *str, int num, char value, bool right_alignment) {
-    int j = s21_strlen(str);
+    int j = strlen(str);
     int i = j + num + 1;
     str = (char *)realloc(str, i * sizeof(char));
 
