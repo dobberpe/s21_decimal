@@ -68,3 +68,20 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {}
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {}
+
+int s21_pow(s21_decimal value, int power, s21_decimal *result) {
+    int res = 0;
+    s21_decimal tmp = {1, 0, 0, 0};
+
+    while (power) {
+        if (power & 1) {
+            res = s21_mul(*result, value, result);
+            --power;
+        } else {
+            res = s21_mul(value, value, &value);
+            power >>= 1;
+        }
+    }
+
+    return res;
+}
