@@ -1,6 +1,6 @@
 #include "s21_decimal.h"
 
-#include <stdio.h>
+
 
 // Возвращет количество предстоящих нулей в мантиссе
 int mantiss_prev_nulls(s21_decimal dec) {
@@ -10,8 +10,8 @@ int mantiss_prev_nulls(s21_decimal dec) {
 }
 
 // Установливает все биты decimal в 0
-void clear_decimal(s21_decimal *dec) {
-    for (int i = 0; i < 4; i++) dec->bits[i] = 0;
+void clear_mantiss(s21_decimal *dec) {
+    for (int i = 0; i < 3; i++) dec->bits[i] = 0;
 }
 
 // Получить бит мантиссы, pos = 0-95
@@ -29,7 +29,7 @@ void set_bit(s21_decimal *dec, int pos, int bit) {
 
 // Сумма мантисс, при переполнении возвращает 1
 int mantiss_sum(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    clear_decimal(result);
+    clear_mantiss(result);
     int overflow = 0;
     for (int i = 0; i < 96; i++) {
         int bit_1 = get_bit(value_1, i);
@@ -42,7 +42,7 @@ int mantiss_sum(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 // Разность мантисс, мантисса value_1 >= value_2
 void mantiss_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    clear_decimal(result);
+    clear_mantiss(result);
     for (int i = 0; i < 96; i++) {
         int bit_1 = get_bit(value_1, i);
         int bit_2 = get_bit(value_2, i);
@@ -65,7 +65,7 @@ int mantiss_compare(s21_decimal value_1, s21_decimal value_2) {
 
 // Сдвиг мантиссы, пока что только влево
 int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift) {
-    clear_decimal(result);
+    clear_mantiss(result);
     int overflow = 0;
     for (int i = 95; i > 95 - shift; i--) {
         if (get_bit(dec, i)) overflow = 1;
@@ -85,7 +85,7 @@ s21_decimal mantiss_shift_right(s21_decimal dec, int shift) {
 
 // Умножение мантисс
 int mantiss_multiply(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    clear_decimal(result);
+    clear_mantiss(result);
     int overflow = 0;
     for (int i = 95; i >= 0 && !overflow; i--) {
         if (get_bit(value_1, i)) {
@@ -98,7 +98,7 @@ int mantiss_multiply(s21_decimal value_1, s21_decimal value_2, s21_decimal *resu
 
 // Деление мантисс остатком, мантисса value_2 != 0, возвращает остаток от деления
 s21_decimal mantiss_devision(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    clear_decimal(result);
+    clear_mantiss(result);
     while (mantiss_compare(value_1, value_2) != -1) {
         int shift = 0;
         s21_decimal tmp = {0};
@@ -160,43 +160,11 @@ void set_sign(s21_decimal *dec, int sign) {
         dec->bits[3] &= ~(1 << 31);
 }
 
-
-// Частично работающий сумматор. Без отрицательных чисел.
-int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    if (get_exp(value_1) > get_exp(value_2)) {
-        s21_decimal switch_val = value_1;
-        value_1 = value_2;
-        value_2 = switch_val;
-    }
-    int exp_1 = get_exp(value_1);
-    int exp_2 = get_exp(value_2);
-    int overflow = 0;
-    while (!overflow && (exp_1 != exp_2) && (exp_1 < 29)) {
-        s21_decimal tmp = {0};
-        overflow = mantiss_mult_by_10(value_1, &tmp);
-        if (!overflow) {
-            exp_1++;
-            value_1 = tmp;
-        }
-    }
-    while (exp_1 != exp_2) {
-        value_2 = mantiss_dev_by_10_with_rownd(value_2);
-        exp_2--;
-    }
-    overflow = mantiss_sum(value_1, value_2, result);
-    while (exp_1 && overflow) {
-        value_2 = mantiss_dev_by_10_with_rownd(value_2);
-        overflow = mantiss_sum(value_1, value_2, result);
-        exp_1--;
-    }
-    set_exp(result, exp_1);
-    if (overflow) {
-        clear_decimal(result);
-        fprintf(stderr, "decimal overflow!\n");
-    }
-    return overflow;
+void decimal_switch(s21_decimal *value_1, s21_decimal *value_2) {
+    s21_decimal switch_val = *value_1;
+    *value_1 = *value_2;
+    *value_2 = switch_val;
 }
-
 
 
 int main() {
@@ -205,21 +173,23 @@ int main() {
     s21_decimal dec3 = {0};
     s21_decimal res = {0};
     set_exp(&dec1, 0);
-    set_exp(&dec2, 2);
-    // dec1.bits[0] = 135;
-    dec2.bits[0] = 54;
-    dec1.bits[2] = 0b11111111111111111111111111111111;
-    dec1.bits[1] = 0b11111111111111111111111111111111;
-    dec1.bits[0] = 0b11111111111111111111111111111111;
+    set_exp(&dec2, 0);
+    set_sign(&dec1, 0);
+    set_sign(&dec2, 0);
+    dec1.bits[0] = 10;
+    dec2.bits[0] = 222;
+    // dec1.bits[2] = 0b11111111111111111111111111111111;
+    // dec1.bits[1] = 0b11111111111111111111111111111111;
+    // dec1.bits[0] = 0b11111111111111111111111111111111;
     // dec2.bits[2] = 0b01111111111111111111111111111111;
     // dec2.bits[1] = 0b11111111111111111111111111111111;
-    // // dec2.bits[0] = 0b11111111111111111111111111111111;
+    // dec2.bits[0] = 0b11111111111111111111111111111110;
     printf("%s\n", dectostr(&dec1));
     printf("%s\n", dectostr(&dec2));
     // dec1.bits[1] = 0b11111111111111111111111111111111;
     // dec1.bits[1] = 1;
     // dec2.bits[2] = 123;
-    s21_add(dec1, dec2, &res);
+    s21_sub(dec1, dec2, &res);
     printf("%s\n", dectostr(&res));
     // printf("%d\n", res.bits[0]);
     // printf("%d\n", dec1.bits[0]);

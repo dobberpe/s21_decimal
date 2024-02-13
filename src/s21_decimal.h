@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <stdio.h>  // <<<<<<<<<<<<<<<<<<<<<<<<<==========================<<<< УДАЛИТЬ ПЕРЕД СДАЧЕЙ
+
 #define min(X, Y) ((X) < (Y) ? (X) : (Y))
 #define max(X, Y) ((X) > (Y) ? (X) : (Y))
 
@@ -73,9 +75,10 @@ int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift);
 s21_decimal mantiss_shift_right(s21_decimal dec, int shift);
 int mantiss_compare(s21_decimal value_1, s21_decimal value_2);
 int mantiss_prev_nulls(s21_decimal dec);
-void clear_decimal(s21_decimal *dec);
+void clear_mantiss(s21_decimal *dec);
 s21_decimal mantiss_dev_by_10_with_rownd(s21_decimal dec);
 int mantiss_mult_by_10(s21_decimal dec, s21_decimal *result);
+void decimal_switch(s21_decimal *value_1, s21_decimal *value_2);
 
 
 #endif
