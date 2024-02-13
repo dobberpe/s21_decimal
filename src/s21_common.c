@@ -166,6 +166,9 @@ void decimal_switch(s21_decimal *value_1, s21_decimal *value_2) {
     *value_2 = switch_val;
 }
 
+int zero_check(s21_decimal dec) {
+    return !(dec.bits[0] + dec.bits[1] + dec.bits[2]);
+}
 
 int main() {
     s21_decimal dec1 = {0};
@@ -176,11 +179,11 @@ int main() {
     set_exp(&dec2, 0);
     set_sign(&dec1, 0);
     set_sign(&dec2, 0);
-    dec1.bits[0] = 10;
-    dec2.bits[0] = 222;
-    // dec1.bits[2] = 0b11111111111111111111111111111111;
-    // dec1.bits[1] = 0b11111111111111111111111111111111;
-    // dec1.bits[0] = 0b11111111111111111111111111111111;
+    dec1.bits[0] = 28;
+    dec2.bits[0] = 2;
+    dec1.bits[2] = 0b11111111111111111111111111111111;
+    dec1.bits[1] = 0b11111111111111111111111111111111;
+    dec1.bits[0] = 0b11111111111111111111111111111111;
     // dec2.bits[2] = 0b01111111111111111111111111111111;
     // dec2.bits[1] = 0b11111111111111111111111111111111;
     // dec2.bits[0] = 0b11111111111111111111111111111110;
@@ -189,7 +192,7 @@ int main() {
     // dec1.bits[1] = 0b11111111111111111111111111111111;
     // dec1.bits[1] = 1;
     // dec2.bits[2] = 123;
-    s21_sub(dec1, dec2, &res);
+    s21_mul(dec1, dec2, &res);
     printf("%s\n", dectostr(&res));
     // printf("%d\n", res.bits[0]);
     // printf("%d\n", dec1.bits[0]);

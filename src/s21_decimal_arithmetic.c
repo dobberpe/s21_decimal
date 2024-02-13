@@ -65,6 +65,53 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     return overflow;
 }
 
-int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {}
+int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    int is_zero = zero_check(value_1) || zero_check(value_2);
+    int exp_1 = get_exp(value_1);
+    int exp_2 = get_exp(value_2);
+    int new_sign = get_sign(value_1) ^ get_sign(value_2);
+    int new_exp = exp_1 + exp_2;
+    int to_small = 0;
+    while (new_exp > 28 && !is_zero && !to_small) {
+        if (exp_1 > exp_2) {
+            value_1 = mantiss_dev_by_10_with_rownd(value_1);
+            exp_1--;
+            
+        } else {
+            value_2 = mantiss_dev_by_10_with_rownd(value_2);
+            exp_2--;
+        }
+        to_small = zero_check(value_1) || zero_check(value_2);
+        new_exp--;
+    }
+
+    int overflow = mantiss_multiply(value_1, value_2, result);
+    while (overflow && new_exp && !to_small) {
+        if (mantiss_prev_nulls(value_2) > mantiss_prev_nulls(value_1)) {
+            value_1 = mantiss_dev_by_10_with_rownd(value_1);
+            exp_1--;
+            
+        } else {
+            value_2 = mantiss_dev_by_10_with_rownd(value_2);
+            exp_2--;
+        }
+        to_small = zero_check(value_1) || zero_check(value_2);
+        new_exp--;
+        overflow = mantiss_multiply(value_1, value_2, result);
+    }
+    
+    if (!is_zero) set_exp(result, new_exp);
+    set_sign(result, new_sign);
+
+    if (overflow) {
+        clear_mantiss(result);
+        printf("decimal overflow!\n");
+    } else if (to_small) {
+        clear_mantiss(result);
+        printf("decimal to small!\n");
+    }
+
+    return overflow ? overflow : to_small + to_small;
+}
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {}
