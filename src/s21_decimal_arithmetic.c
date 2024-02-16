@@ -117,14 +117,18 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     return overflow;
 }
 
+
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    int dev_by_zero = zero_check(value_2);
+    if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL) return 1;
+    if (zero_check(value_2)) return 3;
+
+    clear_mantiss(result);
+
     int is_zero = zero_check(value_1);
     int overflow = 0;
-    int to_small = 0;
     int new_sign = get_sign(value_1) ^ get_sign(value_2);
 
-    if (!dev_by_zero && !is_zero) {
+    if (!is_zero) {
         int exp_1 = get_exp(value_1);
         int exp_2 = get_exp(value_2);
         int new_exp = exp_1 - exp_2;
@@ -132,42 +136,59 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         s21_decimal remainder;
         remainder.bits[0] = 1;
 
-        while (new_exp < 29 && !overflow && !zero_check(remainder) && !to_small) {
+        while (new_exp < 28 && !overflow && !zero_check(remainder)) {
             s21_decimal tmp = {0};
             remainder = mantiss_devision(value_1, value_2, &tmp);
 
-            if (zero_check(tmp)) {
-                value_2 = mantiss_dev_by_10_with_rownd(value_2);
-                if (zero_check(value_2)) to_small = 1;
-            } else if (!zero_check(remainder)) {
 
-            }
-            overflow = mantiss_sum(*result, tmp, result);
-            if (!zero_check(remainder) && !overflow) {
-                overflow = mantiss_mult_by_10(*result, result);
+            // printf("rem = %s\n", dectostr(&remainder));
+
+
+            while (zero_check(tmp) && new_exp < 28 && !overflow) {
+                if (!mantiss_mult_by_10(value_1, &tmp)) {
+                    value_1 = tmp;
+                    mantiss_mult_by_10(*result, result);
+                } else {
+                    value_2 = mantiss_dev_by_10_with_rownd(value_2);
+                }
                 new_exp++;
-                mantiss_mult_by_10(remainder, &remainder);
-                value_1 = remainder;
+                if (zero_check(value_2)) overflow = 1; 
+                remainder = mantiss_devision(value_1, value_2, &tmp);
             }
-            printf("%s\n", dectostr(result));
+
+            if (zero_check(tmp) && new_exp == 28) overflow = 1;
+
+
+            if (overflow) break;
+
+
+            int ov = mantiss_sum(*result, tmp, &tmp);
+            if (!ov) *result = tmp;
+
+            // printf("res = %s\n", dectostr(result));
+
+
+            if (!zero_check(remainder) && !ov && !overflow && new_exp < 28) {
+                ov = mantiss_mult_by_10(*result, &tmp);
+                if (!ov) {
+                    *result = tmp;
+                    new_exp++;
+                    mantiss_mult_by_10(remainder, &remainder);
+                    value_1 = remainder;
+                }
+            }
+
         }
         while (new_exp < 0) {
             overflow = mantiss_mult_by_10(*result, result);
             new_exp++;
         }
-        to_small = zero_check(*result) - is_zero;
         set_exp(result, new_exp);
     }
 
-    int errno = dev_by_zero ? 3 : overflow ? overflow : to_small + to_small;
+    int errno = overflow ? overflow : 0;
     set_sign(result, new_sign);
         // DEBUG
-    if (overflow) {
-        printf("decimal overflow!\n");
-    } else if (to_small) {
-        printf("decimal to small!\n");
-    } else if (dev_by_zero) {
-        printf("division by zero!\n");
-    }
+    
     return errno;
 }
