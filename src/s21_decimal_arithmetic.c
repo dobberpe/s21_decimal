@@ -143,7 +143,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
                 mantiss_mult_by_10(remainder, &remainder);
                 value_1 = remainder;
             }
-            printf("%s\n", dectostr(result));
+            printf("%s\n", dectostr(*result));
         }
         while (new_exp < 0) {
             overflow = mantiss_mult_by_10(*result, result);
@@ -168,7 +168,10 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_pow(s21_decimal value, int power, s21_decimal *result) {
     int res = 0;
-    s21_decimal tmp = {1, 0, 0, 0};
+    result->bits[0] = 1;
+    result->bits[1] = 0;
+    result->bits[2] = 0;
+    result->bits[3] = 0;
 
     while (power) {
         if (power & 1) {

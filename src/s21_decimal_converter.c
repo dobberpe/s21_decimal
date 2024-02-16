@@ -1,6 +1,6 @@
 #include "s21_decimal.h"
 
-int s21_from_int_to_decimal(int src, s21_decimal *dst) {
+int s21_from_int_to_decimal(int src, s21_decimal *dst) { // протестировано работает
     dst->bits[0] = (unsigned)abs(src);
     dst->bits[1] = 0;
     dst->bits[2] = 0;
@@ -11,13 +11,16 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst) {
     return 0;
 }
 
-int s21_from_float_to_decimal(float src, s21_decimal *dst) {
-    int res = 0;
+int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // переводит, но пока без округления
+    int res = 0;                                               // до 7 значащих и в пределах инта
     f_bits f = {src};
     int e = ((f.bits << 1) >> 24) - 127;
     if (e < -93) {
         res = 1;
-        src = 0;
+        dst->bits[0] = 0;
+        dst->bits[1] = 0;
+        dst->bits[2] = 0;
+        dst->bits[3] = 0;
     } else {
         s21_decimal int_part = {0, 0, 0, 0};
         if (e > 0) { // пока для экспоненты в пределах одного инта
@@ -34,20 +37,23 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
         while (mask && !res) {
             if (mask & f.bits) {
                 sign_n_exp.bits[2] = (unsigned)e;
-                if (res = s21_pow(five, e, &tmp)) res = s21_add(frac_part, tmp, &frac_part);
+                if (!(res = s21_pow(five, e, &tmp))) {
+                    tmp.bits[3] = sign_n_exp.last_int;
+                    res = s21_add(frac_part, tmp, &frac_part);
+                }
             }
             mask >>= 1;
             ++e;
         }
         if (!res) {
-            if ((res = s21_add(int_part, frac_part, dst)) && f.full < 0) set_bit(dst, 127, 1);
+            if (!(res = s21_add(int_part, frac_part, dst)) && f.full < 0) set_sign(dst, 1);
         }
     }
 
     return res;
 }
 
-int s21_from_decimal_to_int(s21_decimal src, int *dst) {
+int s21_from_decimal_to_int(s21_decimal src, int *dst) { // нужен truncate
     int res = 0;
     s21_decimal ten = {0b1010, 0, 0, 0};
     s21_decimal max_int = {0xffffffff, 0, 0, 0};

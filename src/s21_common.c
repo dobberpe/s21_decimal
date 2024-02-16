@@ -187,19 +187,19 @@ int main() {
     // dec2.bits[2] = 0b01111111111111111111111111111111;
     // dec2.bits[1] = 0b11111111111111111111111111111111;
     // dec2.bits[0] = 0b11111111111111111111111111111110;
-    printf("%s\n", dectostr(&dec1));
-    printf("%s\n", dectostr(&dec2));
+    printf("%s\n", dectostr(dec1));
+    printf("%s\n", dectostr(dec2));
     // dec1.bits[1] = 0b11111111111111111111111111111111;
     // dec1.bits[1] = 1;
     // dec2.bits[2] = 123;
     s21_div(dec1, dec2, &res);
-    printf("%s\n", dectostr(&res));
+    printf("%s\n", dectostr(res));
     // printf("%d\n", res.bits[0]);
     // printf("%d\n", dec1.bits[0]);
     dec3.bits[0] = 0b11111111111111111111111111111111;
     dec3.bits[1] = 0b11111111111111111111111111111111;
     dec3.bits[2] = 0b11111111111111111111111111111111;
-    printf("%s\n", dectostr(&dec3));
+    printf("%s\n", dectostr(dec3));
     // s21_decimal s = mantiss_dev_by_10_with_rownd(dec1);
     // printf("%s\n", dectostr(&s));
 
