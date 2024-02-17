@@ -141,7 +141,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
             remainder = mantiss_devision(value_1, value_2, &tmp);
 
 
-            // printf("rem = %s\n", dectostr(&remainder));
+            printf("res = %s\n", dectostr(result));
 
 
             while (zero_check(tmp) && new_exp < 28 && !overflow) {
@@ -164,6 +164,9 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
             int ov = mantiss_sum(*result, tmp, &tmp);
             if (!ov) *result = tmp;
+
+
+            if (mantiss_mult_by_10(*result, &tmp)) break;
 
             // printf("res = %s\n", dectostr(result));
 
