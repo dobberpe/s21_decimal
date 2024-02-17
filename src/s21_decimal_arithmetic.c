@@ -136,37 +136,58 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         s21_decimal remainder;
         remainder.bits[0] = 1;
 
-        while (new_exp < 28 && !overflow && !zero_check(remainder)) {
+        while (new_exp <= 28 && !overflow && !zero_check(remainder)) {
             s21_decimal tmp = {0};
             remainder = mantiss_devision(value_1, value_2, &tmp);
 
 
-            printf("res = %s\n", dectostr(result));
+            // printf("res = %s\n", dectostr(result));
+            
 
 
             while (zero_check(tmp) && new_exp < 28 && !overflow) {
-                if (!mantiss_mult_by_10(value_1, &tmp)) {
+                if (mantiss_mult_by_10(value_1, &tmp) == 0) {
                     value_1 = tmp;
-                    mantiss_mult_by_10(*result, result);
+                    if (mantiss_mult_by_10(*result, &tmp)) break;
+                    else *result = tmp;
                 } else {
                     value_2 = mantiss_dev_by_10_with_rownd(value_2);
+                    printf("va2 = %s\n", dectostr(&value_2));
                 }
                 new_exp++;
                 if (zero_check(value_2)) overflow = 1; 
                 remainder = mantiss_devision(value_1, value_2, &tmp);
+                // printf("va1 = %s\n", dectostr(&value_1));
+                // printf("exp = %d\n", new_exp);
             }
 
             if (zero_check(tmp) && new_exp == 28) overflow = 1;
 
 
-            if (overflow) break;
+            // if (overflow) break;
 
 
             int ov = mantiss_sum(*result, tmp, &tmp);
             if (!ov) *result = tmp;
+            // else printf("rem = %s\n", dectostr(&remainder));
 
+            
+            if (mantiss_mult_by_10(*result, &tmp)) {
 
-            if (mantiss_mult_by_10(*result, &tmp)) break;
+                // printf("rem = %s\n", dectostr(&remainder));
+
+                mantiss_mult_by_10(remainder, &remainder);
+                mantiss_devision(remainder, value_2, &tmp);
+                s21_decimal ten = {0};
+                ten.bits[0] = 10;
+                s21_decimal round = mantiss_devision(tmp, ten, &tmp);
+                if (round.bits[0] >= 5/* || (round.bits[0] == 5 && get_bit(*result, 0))*/) {
+                    ten.bits[0] = 1;
+                    mantiss_sum(*result, ten, result);
+                }
+
+                break;
+            }
 
             // printf("res = %s\n", dectostr(result));
 
