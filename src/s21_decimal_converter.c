@@ -12,41 +12,50 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst) { // протестиро
 }
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // переводит, но пока без округления
-    int res = 0;                                               // до 7 значащих и в пределах инта
+    int res = 0;                                               // до 7 значащих
     f_bits f = {src};
     int e = ((f.bits << 1) >> 24) - 127;
-    if (e < -93) {
+    
+    for (int i = 0; i < 4; ++i) dst->bits[i] = 0;
+    
+    if (f.bits && (e < -93 || e > 95)) {
         res = 1;
-        dst->bits[0] = 0;
-        dst->bits[1] = 0;
-        dst->bits[2] = 0;
-        dst->bits[3] = 0;
-    } else {
-        s21_decimal int_part = {0, 0, 0, 0};
-        if (e > 0) { // пока для экспоненты в пределах одного инта
+    } else if (f.bits) {
+        if ((e >= 23 && e <= 31) || (e >= 55 && e <= 63) || (e >= 87 && e <= 95)) {
+            unsigned int_bits = (f.bits << 9) >> 9;
+            int_bits = (int_bits << (e % (e < 55 ? 23 : e < 87 ? 55 : 87))) | ((unsigned)1 << (e % 32));
+            dst->bits[e < 55 ? 0 : e < 87 ? 1 : 2] = int_bits;
+        } else if (e > 31) { // нужно проверить пограничные случаи
+            unsigned int_bits = (f.bits << 9) >> 9;
+            int_bits = (int_bits >> (24 - e % (e > 63 ? 63 : 31))) | ((unsigned)1 << (e % (e > 63 ? 63 : 31) - 1));
+            dst->bits[e > 63 ? 2 : 1] = int_bits;
+            int_bits = f.bits << (9 + e % (e > 63 ? 63 : 31) - 1);
+            dst->bits[e > 63 ? 1 : 0] = int_bits;
+        } else { // пока для экспоненты в пределах одного инта
+            s21_decimal int_part = {0, 0, 0, 0};
+            s21_decimal frac_part = {0, 0, 0, 0};
             unsigned int_bits = ((f.bits << 9) >> (10 + (22 - e))) | ((unsigned)1 << e);
             int_part.bits[0] = int_bits;
-        }
-
-        s21_decimal frac_part = {0, 0, 0, 0};
-        e = 1;
-        unsigned mask = ((unsigned)1 << 22) >> e;
-        s21_decimal five = {0b101, 0, 0, 0};
-        s21_decimal tmp;
-        s21_bits_4 sign_n_exp = {0, 0, 0, 0};
-        while (mask && !res) {
-            if (mask & f.bits) {
-                sign_n_exp.bits[2] = (unsigned)e;
-                if (!(res = s21_pow(five, e, &tmp))) {
-                    tmp.bits[3] = sign_n_exp.last_int;
-                    res = s21_add(frac_part, tmp, &frac_part);
+            
+            unsigned mask = ((unsigned)1 << 22) >> e;
+            e = 1;
+            s21_decimal five = {0b101, 0, 0, 0};
+            s21_decimal tmp;
+            s21_bits_4 sign_n_exp = {0, 0, 0, 0};
+            while (mask && !res) {
+                if (mask & f.bits) {
+                    sign_n_exp.bits[2] = (unsigned)e;
+                    if (!(res = s21_pow(five, e, &tmp))) { // декомпозировать вложенность!!!
+                        tmp.bits[3] = sign_n_exp.last_int;
+                        res = s21_add(frac_part, tmp, &frac_part);
+                    }
                 }
+                mask >>= 1;
+                ++e;
             }
-            mask >>= 1;
-            ++e;
-        }
-        if (!res) {
-            if (!(res = s21_add(int_part, frac_part, dst)) && f.full < 0) set_sign(dst, 1);
+            if (!res) {
+                if (!(res = s21_add(int_part, frac_part, dst)) && f.full < 0) set_sign(dst, 1);
+            }
         }
     }
 
