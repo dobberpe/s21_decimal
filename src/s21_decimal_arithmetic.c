@@ -142,7 +142,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 
             // printf("res = %s\n", dectostr(result));
-            
+            // printf("va1 = %s\n", dectostr(&value_1));
 
 
             while (zero_check(tmp) && new_exp < 28 && !overflow) {
@@ -197,7 +197,12 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
                 if (!ov) {
                     *result = tmp;
                     new_exp++;
-                    mantiss_mult_by_10(remainder, &remainder);
+                    // printf("remainder = %s\n", dectostr(&remainder));
+                    if (mantiss_mult_by_10(remainder, &tmp)) {
+                        new_exp--;
+                    } else {
+                        remainder = tmp;
+                    }
                     value_1 = remainder;
                 }
             }
