@@ -34,32 +34,27 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
         } else { // пока для экспоненты в пределах одного инта
             s21_decimal int_part = {0, 0, 0, 0};
             s21_decimal frac_part = {0, 0, 0, 0};
-            s21_decimal five = {0b101, 0, 0, 0};
+            s21_decimal two = {2, 0, 0, 0};
             s21_decimal tmp;
-            s21_bits_4 sign_n_exp = {0, 0, 0, 0};
             if (e >= 0) {
                 unsigned int_bits = ((f.bits << 9) >> (9 + (23 - e))) | ((unsigned)1 << e);
                 int_part.bits[0] = int_bits;
             } else {
-                sign_n_exp.bits[2] = (unsigned)abs(e);
-                if (!(res = s21_pow(five, abs(e), &tmp))) {
-                    tmp.bits[3] = sign_n_exp.last_int;
+                if (!(res = s21_pow(two, e, &tmp))) {
                     res = s21_add(frac_part, tmp, &frac_part);
                 }
             }
 
             unsigned mask = ((unsigned)1 << 22) >> (e > 0 ? e : 0);
-            e = e >= 0 ? 1 : abs(e);
+            e = e >= 0 ? -1 : e;
             while (mask && !res) {
                 if (mask & f.bits) {
-                    sign_n_exp.bits[2] = (unsigned)e;
-                    if (!(res = s21_pow(five, e, &tmp))) { // декомпозировать вложенность!!!
-                        tmp.bits[3] = sign_n_exp.last_int;
+                    if (!(res = s21_pow(two, e, &tmp))) { // декомпозировать вложенность!!!
                         res = s21_add(frac_part, tmp, &frac_part);
                     }
                 }
                 mask >>= 1;
-                ++e;
+                --e;
             }
             if (!res) {
                 if (!(res = s21_add(int_part, frac_part, dst)) && f.full < 0) set_sign(dst, 1);
