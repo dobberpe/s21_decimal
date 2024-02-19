@@ -161,3 +161,23 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     if (overflow) clear_mantiss(result);
     return overflow ? overflow + new_sign : 0;
 }
+
+int s21_pow(s21_decimal value, int power, s21_decimal *result) {
+    int res = 0;
+    result->bits[0] = 1;
+    result->bits[1] = 0;
+    result->bits[2] = 0;
+    result->bits[3] = 0;
+
+    while (power) {
+        if (power & 1) {
+            res = power > 0 ? s21_mul(*result, value, result) : s21_div(*result, value, result);
+            power += power > 0 ? -1 : 1;
+        } else {
+            res = s21_mul(value, value, &value);
+            power >>= 1;
+        }
+    }
+
+    return res;
+}
