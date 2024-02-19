@@ -94,7 +94,7 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     if (s21_is_not_equal(int_part, zero)) {
         pos = 95 - mantiss_prev_nulls(int_part);
         set_bit(&int_part, pos, 0);
-        f.bits = (pos + 127) << 24;
+        f.bits = (pos + 127) << 23;
         f.bits |= get_sign(int_part) ? (1 << 31) : 0;
         if ((pos % 32 >= 23 && pos % 32 <= 31) || pos < 23) {
             f.bits |= pos < 23 ? int_part.bits[pos / 32] << (23 - pos) : int_part.bits[pos / 32] >> (pos - 23);
@@ -112,8 +112,8 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
                 s21_mul(frac_part, two, &frac_part);
                 s21_truncate(frac_part, &int_part);
                 s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= pos != 24 ? (int_part.bits[0] << (pos - 1)) : 0;
-                if ((sign_bits = int_part.bits[0] ? true : sign_bits)) --pos;
+                f.bits |= pos != 24 ? (frac_part.bits[0] << (pos - 1)) : 0;
+                if ((sign_bits = frac_part.bits[0] ? true : sign_bits)) --pos;
             }
         } else {
             pos = 23 - pos;
@@ -121,7 +121,7 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
                 s21_mul(frac_part, two, &frac_part);
                 s21_truncate(frac_part, &int_part);
                 s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= int_part.bits[0] /*<< pos*/;
+                f.bits |= frac_part.bits[0] /*<< pos*/;
                 --pos;
             }
         }
