@@ -192,7 +192,7 @@ START_TEST(s21_div_1) {
   // -547783951080155032315
   s21_decimal dec_2 = {{0x4098aafb, 0xb2078939, 0x1d, 0x80000000}};
   // 0.0
-  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x10000}};
+  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x80000000}};
   s21_decimal result;
   int return_value = s21_div(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -1756,7 +1756,7 @@ START_TEST(s21_div_93) {
   // -5575
   s21_decimal dec_2 = {{0x15c7, 0x0, 0x0, 0x80000000}};
   // 0
-  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x0}};
+  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x80000000}};
   s21_decimal result;
   int return_value = s21_div(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -2861,7 +2861,7 @@ START_TEST(s21_div_158) {
   // -66133
   s21_decimal dec_2 = {{0x10255, 0x0, 0x0, 0x80000000}};
   // 0
-  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x0}};
+  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x80000000}};
   s21_decimal result;
   int return_value = s21_div(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -4068,7 +4068,7 @@ START_TEST(s21_div_229) {
   // -2749039129786042329360396531
   s21_decimal dec_2 = {{0x9cb670f3, 0xd68cb2bb, 0x8e1f3ad, 0x80000000}};
   // 0
-  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x0}};
+  s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x80000000}};
   s21_decimal result;
   int return_value = s21_div(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
