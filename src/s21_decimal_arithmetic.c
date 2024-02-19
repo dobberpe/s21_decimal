@@ -145,7 +145,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
             // printf("va1 = %s\n", dectostr(&value_1));
 
 
-            while (zero_check(tmp) && new_exp < 28 && !overflow) {
+            while (zero_check(tmp) && new_exp <= 28 && !overflow) {
                 if (mantiss_mult_by_10(value_1, &tmp) == 0) {
                     value_1 = tmp;
                     if (mantiss_mult_by_10(*result, &tmp)) break;
@@ -161,11 +161,10 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
                 // printf("exp = %d\n", new_exp);
             }
 
-            if (zero_check(tmp) && new_exp == 28) overflow = 1;
+            if (zero_check(tmp) && new_exp >= 28) overflow = 1;
 
 
             // if (overflow) break;
-
 
             int ov = mantiss_sum(*result, tmp, &tmp);
             if (!ov) *result = tmp;
@@ -189,10 +188,10 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
                 break;
             }
 
-            // printf("res = %s\n", dectostr(result));
+            printf("res = %s\n", dectostr(result));
 
 
-            if (!zero_check(remainder) && !ov && !overflow && new_exp < 28) {
+            if (!zero_check(remainder) && !ov && !overflow && new_exp <= 28) {
                 ov = mantiss_mult_by_10(*result, &tmp);
                 if (!ov) {
                     *result = tmp;
@@ -212,12 +211,16 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
             overflow = mantiss_mult_by_10(*result, result);
             new_exp++;
         }
+        if (new_exp == 29) {
+            *result = mantiss_dev_by_10_with_rownd(*result);
+            new_exp--;
+        }
         set_exp(result, new_exp);
     }
 
     int errno = overflow ? overflow : 0;
     set_sign(result, new_sign);
         // DEBUG
-    
+    printf("%d\n", get_exp(*result));
     return errno;
 }

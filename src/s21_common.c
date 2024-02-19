@@ -182,46 +182,46 @@ int decimal_valid(s21_decimal *dec) {
     return (dec == NULL) || get_exp(*dec) > 28 || get_exp(*dec) < 0 || dec->bits[3] << 16;
 }
 
-// int main() {
-//   // -77283039920
+int main() {
+  // -77283039920
 //   s21_decimal dec1 = {{0xfe6d9ab0, 0x11, 0x0, 0x80000000}};
 //   // -11267.275504047544421309931647
 //   s21_decimal dec2 = {{0xccfae07f, 0xf95b851a, 0x24681264, 0x80180000}};
 
-//     s21_decimal res = {0};
-//     s21_decimal dec3 = {0};
+    s21_decimal res = {0};
+    s21_decimal dec3 = {0};
 
-//     // s21_decimal dec_1 = {0}, dec_2 = {0};
-//     // // dec_1.bits[0] = 10;
-//     // // dec_2.bits[0] = 3;
-//     // // set_exp(&dec_1, 0);
-//     // // set_exp(&dec_2, 0); 
+    // s21_decimal dec_1 = {0}, dec_2 = {0};
+    // // dec_1.bits[0] = 10;
+    // // dec_2.bits[0] = 3;
+    // // set_exp(&dec_1, 0);
+    // // set_exp(&dec_2, 0); 
 
-//     // s21_decimal dec1 = {0};
-//     // s21_decimal dec2 = {0};
-//     // set_exp(&dec1, 0);
-//     // set_exp(&dec2, 20);
-//     // set_sign(&dec1, 0);
-//     // set_sign(&dec2, 0);
-//     // dec1.bits[0] = 1;
-//     // dec2.bits[0] = 1;
-//     // dec1.bits[2] = 0b11111111111111111111111111111111;
-//     // dec1.bits[1] = 0b11111111111111111111111111111111;
-//     // dec1.bits[0] = 0b11111111111111111111111111111111;
-//     // dec2.bits[2] = 0b11111111111111111111111111111111;
-//     // dec2.bits[1] = 0b11111111111111111111111111111111;
-//     // dec2.bits[0] = 0b11111111111111111111111111111111;
-//     printf("%s\n", dectostr(&dec1));
-//     printf("%s\n", dectostr(&dec2));
-//     s21_div(dec1, dec2, &res);
-//     printf("%s\n", dectostr(&res));
+    s21_decimal dec1 = {0};
+    s21_decimal dec2 = {0};
+    set_exp(&dec1, 0);
+    set_exp(&dec2, 0);
+    set_sign(&dec1, 0);
+    set_sign(&dec2, 0);
+    dec1.bits[0] = 10;
+    dec2.bits[0] = 6;
+    // dec1.bits[2] = 0b11111111111111111111111111111111;
+    // dec1.bits[1] = 0b11111111111111111111111111111111;
+    // dec1.bits[0] = 0b11111111111111111111111111111111;
+    // dec2.bits[2] = 0b11111111111111111111111111111111;
+    // dec2.bits[1] = 0b11111111111111111111111111111111;
+    // dec2.bits[0] = 0b11111111111111111111111111111111;
+    printf("%s\n", dectostr(&dec1));
+    printf("%s\n", dectostr(&dec2));
+    s21_div(dec1, dec2, &res);
+    printf("%s\n", dectostr(&res));
+    
+    
 
-//   // 6859070.7569223461716587002356
-//   s21_decimal dec_check = {{0xdd3539f4, 0xf1893fda, 0xdda0e74b, 0x160000}};
-//     printf("%s\n", dectostr(&dec_check));
-//     dec3.bits[0] = 0b11111111111111111111111111111111;
-//     dec3.bits[1] = 0b11111111111111111111111111111111;
-//     dec3.bits[2] = 0b11111111111111111111111111111111;
-//     printf("%s\n", dectostr(&dec3));
-//     return 0;
-// }
+
+    dec3.bits[0] = 0b11111111111111111111111111111111;
+    dec3.bits[1] = 0b11111111111111111111111111111111;
+    dec3.bits[2] = 0b11111111111111111111111111111111;
+    printf("%s\n", dectostr(&dec3));
+    return 0;
+}
