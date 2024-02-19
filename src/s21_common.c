@@ -11,7 +11,7 @@ int mantiss_prev_nulls(s21_decimal dec) {
 
 // Установливает все биты decimal в 0
 void clear_mantiss(s21_decimal *dec) {
-    for (int i = 0; i < 3; i++) dec->bits[i] = 0;
+    for (int i = 0; i < 4; i++) dec->bits[i] = 0;
 }
 
 // Получить бит мантиссы, pos = 0-95
@@ -117,12 +117,20 @@ s21_decimal mantiss_devision(s21_decimal value_1, s21_decimal value_2, s21_decim
 }
 
 s21_decimal mantiss_dev_by_10_with_rownd(s21_decimal dec) {
+    static bool round_factor = true;
     s21_decimal ten = {0};
     ten.bits[0] = 10;
     s21_decimal rem = mantiss_devision(dec, ten, &dec);
-    if ((rem.bits[0] == 5 && get_bit(dec, 0)) || rem.bits[0] > 5) {
+    if ((rem.bits[0] == 5 && get_bit(dec, 0)) && round_factor || rem.bits[0] > 5) {
         ten.bits[0] = 1;
         mantiss_sum(dec, ten, &dec);
+        
+        s21_decimal tmp;
+        ten.bits[0] = 10;
+        rem = mantiss_devision(dec, ten, &tmp);
+        if (rem.bits[0] == 5) round_factor = false;
+    } else {
+        round_factor = true;
     }
     return dec;
 }
@@ -170,57 +178,50 @@ int zero_check(s21_decimal dec) {
     return !(dec.bits[0] + dec.bits[1] + dec.bits[2]);
 }
 
+int decimal_valid(s21_decimal *dec) {
+    return (dec == NULL) || get_exp(*dec) > 28 || get_exp(*dec) < 0 || dec->bits[3] << 16;
+}
+
 int main() {
+  // -77283039920
+//   s21_decimal dec1 = {{0xfe6d9ab0, 0x11, 0x0, 0x80000000}};
+//   // -11267.275504047544421309931647
+//   s21_decimal dec2 = {{0xccfae07f, 0xf95b851a, 0x24681264, 0x80180000}};
+
+    s21_decimal res = {0};
+    s21_decimal dec3 = {0};
+
+    // s21_decimal dec_1 = {0}, dec_2 = {0};
+    // // dec_1.bits[0] = 10;
+    // // dec_2.bits[0] = 3;
+    // // set_exp(&dec_1, 0);
+    // // set_exp(&dec_2, 0); 
+
     s21_decimal dec1 = {0};
     s21_decimal dec2 = {0};
-    s21_decimal dec3 = {0};
-    s21_decimal res = {0};
     set_exp(&dec1, 0);
-    set_exp(&dec2, 1);
+    set_exp(&dec2, 0);
     set_sign(&dec1, 0);
     set_sign(&dec2, 0);
-    dec1.bits[0] = 312412;
-    dec2.bits[0] = 43242;
+    dec1.bits[0] = 10;
+    dec2.bits[0] = 6;
     // dec1.bits[2] = 0b11111111111111111111111111111111;
     // dec1.bits[1] = 0b11111111111111111111111111111111;
     // dec1.bits[0] = 0b11111111111111111111111111111111;
-    // dec2.bits[2] = 0b01111111111111111111111111111111;
+    // dec2.bits[2] = 0b11111111111111111111111111111111;
     // dec2.bits[1] = 0b11111111111111111111111111111111;
-    // dec2.bits[0] = 0b11111111111111111111111111111110;
+    // dec2.bits[0] = 0b11111111111111111111111111111111;
     printf("%s\n", dectostr(dec1));
     printf("%s\n", dectostr(dec2));
-    // dec1.bits[1] = 0b11111111111111111111111111111111;
-    // dec1.bits[1] = 1;
-    // dec2.bits[2] = 123;
     s21_div(dec1, dec2, &res);
     printf("%s\n", dectostr(res));
-    // printf("%d\n", res.bits[0]);
-    // printf("%d\n", dec1.bits[0]);
+    
+    
+
+
     dec3.bits[0] = 0b11111111111111111111111111111111;
     dec3.bits[1] = 0b11111111111111111111111111111111;
     dec3.bits[2] = 0b11111111111111111111111111111111;
     printf("%s\n", dectostr(dec3));
-    // s21_decimal s = mantiss_dev_by_10_with_rownd(dec1);
-    // printf("%s\n", dectostr(&s));
-
-    // printf("%d\n", mantiss_compare(dec1, dec2));
-    // dec1.bits[1] = 1;
-    // dec2.bits[1] = 1;
-    // dec1.bits[2] = 1;
-    // dec2.bits[2] = 1;
-    // printf("%d\n", )
-    // printf("%d\n", mantiss_prev_nulls(dec1));
-    // printf("%s\n", dectostr(dec1));
-    // printf("%s\n", dectostr(dec2));
-    // mantiss_sum(dec1, dec2, &res);
-    // mantiss_multiply(res, dec2, &res);
-    // s21_add(dec1, dec2, &res);
-    // printf("%d\n", get_exp(res));
-    // mantiss_sub(dec1, dec2, &res);
-    // printf("%s\n", dectostr(res));
-    // printf("%d\n", res.bits[0]);
-
-    // set_exp(&res, 10);
-    // printf("%d\n", get_exp(res));
     return 0;
 }
