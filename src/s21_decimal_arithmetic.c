@@ -150,7 +150,11 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
             overflow = mantiss_mult_by_10(*result, result);
             new_exp++;
         }
-        if (new_exp == 29) new_exp--;
+        if (new_exp == 29) {
+            if (!mantiss_mult_by_10(*result, &remainder)) 
+                *result = mantiss_dev_by_10_with_rownd(*result);
+            new_exp--;
+        }
         set_exp(result, new_exp);
     }
     set_sign(result, new_sign);
