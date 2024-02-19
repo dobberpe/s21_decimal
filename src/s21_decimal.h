@@ -31,7 +31,6 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_pow(s21_decimal value, int power, s21_decimal *result);
-int s21_new_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 
 // операторы сравнения
 int s21_is_less(s21_decimal, s21_decimal);

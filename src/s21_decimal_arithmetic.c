@@ -128,7 +128,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       }
       if (zero_check(tmp) && zero_check(*result) && new_exp >= 28) overflow = 1;
       if (!mantiss_sum(*result, tmp, &tmp)) *result = tmp;
-      if (mantiss_mult_by_10(*result, &tmp)) {
+      if (mantiss_mult_by_10(*result, &tmp) || new_exp >= 28) {
         mantiss_mult_by_10(remainder, &remainder);
         mantiss_devision(remainder, value_2, &tmp);
         s21_decimal ten = {10, 0, 0, 0};
