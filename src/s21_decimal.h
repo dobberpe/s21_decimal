@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <stdio.h>  // <<<<<<<<<<<<<<<<<<<<<<<<<==========================<<<< УДАЛИТЬ ПЕРЕД СДАЧЕЙ
 
@@ -29,6 +30,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+int s21_pow(s21_decimal value, int power, s21_decimal *result);
 int s21_new_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 
 // операторы сравнения
@@ -52,7 +54,7 @@ int s21_truncate(s21_decimal value, s21_decimal *result);
 int s21_negate(s21_decimal value, s21_decimal *result);
 
 // конвертер в строку
-char* dectostr(const s21_decimal *dec);
+char* dectostr(const s21_decimal dec);
 int extract_exp(const unsigned bits);
 char *calculate_decimal(char *str, const unsigned *bits);
 char *utoa(unsigned d);
