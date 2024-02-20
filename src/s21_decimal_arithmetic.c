@@ -155,7 +155,7 @@ int s21_pow(s21_decimal value, int power, s21_decimal *result) {
     result->bits[2] = 0;
     result->bits[3] = 0;
 
-    while (power) {
+    while (power && !res) {
         if (power & 1) {
             res = power > 0 ? s21_mul(*result, value, result) : s21_div(*result, value, result);
             power += power > 0 ? -1 : 1;
@@ -163,6 +163,13 @@ int s21_pow(s21_decimal value, int power, s21_decimal *result) {
             res = s21_mul(value, value, &value);
             power >>= 1;
         }
+    }
+
+    if (res) {
+        result->bits[0] = 0;
+        result->bits[1] = 0;
+        result->bits[2] = 0;
+        result->bits[3] = 0;
     }
 
     return res;
