@@ -3,7 +3,7 @@ CFLAGS =
 TFLAGS = -lcheck -lsubunit -lm
 GFLAGS = -fprofile-arcs -ftest-coverage
 LIB_NAME = s21_decimal.a
-LIB_SRC = s21_decimal_arithmetic.c s21_decimal_converter.c s21_common.c s21_dectostr.c
+LIB_SRC = s21_decimal_arithmetic.c s21_decimal_converter.c s21_common.c s21_dectostr.c s21_decimal_compare.c s21_decimal_other.c
 LIB_OBJ = $(LIB_SRC:.c=.o)
 TEST_SRC = $(wildcard ./tests/*.c)
 # TEST_SRC = tests/s21_string_test.c tests/apply_format_test.c tests/s21_sprintf.c
@@ -20,8 +20,12 @@ test: $(TEST_OBJ) $(LIB_NAME)
 
 gcov_report: clean
 	@command -v lcov >/dev/null 2>&1 || { echo >&2 "Error: lcov not found. Please install lcov."; exit 1; }
-	gcc -o s21_string.o -c $(GFLAGS) s21_string.c
-	gcc -o s21_sprintf.o -c $(GFLAGS) s21_sprintf.c
+	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_arithmetic.c
+	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_converter.c
+	gcc -o s21_string.o -c $(GFLAGS) s21_common.c
+	gcc -o s21_string.o -c $(GFLAGS) s21_dectostr.c
+	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_compare.c
+	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_other.c
 	ar rcs $(LIB_NAME) $(LIB_OBJ)
 	ranlib $(LIB_NAME)
 	rm -f $(LIB_OBJ)
