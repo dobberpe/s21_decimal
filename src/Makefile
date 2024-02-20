@@ -20,12 +20,12 @@ test: $(TEST_OBJ) $(LIB_NAME)
 
 gcov_report: clean
 	@command -v lcov >/dev/null 2>&1 || { echo >&2 "Error: lcov not found. Please install lcov."; exit 1; }
-	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_arithmetic.c
-	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_converter.c
-	gcc -o s21_string.o -c $(GFLAGS) s21_common.c
-	gcc -o s21_string.o -c $(GFLAGS) s21_dectostr.c
-	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_compare.c
-	gcc -o s21_string.o -c $(GFLAGS) s21_decimal_other.c
+	gcc -o s21_decimal_arithmetic.o -c $(GFLAGS) s21_decimal_arithmetic.c
+	gcc -o s21_decimal_converter.o -c $(GFLAGS) s21_decimal_converter.c
+	gcc -o s21_common.o -c $(GFLAGS) s21_common.c
+	gcc -o s21_dectostr.o -c $(GFLAGS) s21_dectostr.c
+	gcc -o s21_decimal_compare.o -c $(GFLAGS) s21_decimal_compare.c
+	gcc -o s21_decimal_other.o -c $(GFLAGS) s21_decimal_other.c
 	ar rcs $(LIB_NAME) $(LIB_OBJ)
 	ranlib $(LIB_NAME)
 	rm -f $(LIB_OBJ)
@@ -35,7 +35,6 @@ gcov_report: clean
 	genhtml coverage.info -o coverage_report
 	# rm -rf gcov_r* coverage.info *.gcda *.gcno tests/*.gcno
 	open coverage_report/index.html
-	endif
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

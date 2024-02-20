@@ -211,51 +211,50 @@ int mantiss_round(s21_decimal *result, s21_decimal remainder, s21_decimal value_
     return 0;
 }
 
-int main() {
-//   // -77283039920
-//   s21_decimal dec1 = {{0xfe6d9ab0, 0x11, 0x0, 0x80000000}};
-//   // -11267.275504047544421309931647
-//   s21_decimal dec2 = {{0xccfae07f, 0xf95b851a, 0x24681264, 0x80180000}};
+// int main() {
+//   // -285723589948267
+//   s21_decimal dec1 = {{0x3515336b, 0x103dd, 0x0, 0x80000000}};
+//   // 2.3274245695749650513
+//   s21_decimal dec2 = {{0xe6527851, 0x42febb25, 0x1, 0x130000}};
+//   // -285723589948264.67257543042503
+//   s21_decimal dec_check = {{0xea6025c7, 0xc2e68579, 0x5c52805c, 0x800e0000}};
 
-    s21_decimal res = {0};
-    s21_decimal dec3 = {0};
+//     s21_decimal res = {0};
+//     s21_decimal dec3 = {0};
 
-    // s21_decimal dec_1 = {0}, dec_2 = {0};
-    // dec_1.bits[0] = 10;
-    // dec_2.bits[0] = 3;
-    // set_exp(&dec_1, 0);
-    // set_exp(&dec_2, 0); 
+//     // s21_decimal dec_1 = {0}, dec_2 = {0};
+//     // dec_1.bits[0] = 10;
+//     // dec_2.bits[0] = 3;
+//     // set_exp(&dec_1, 0);
+//     // set_exp(&dec_2, 0); 
 
-    s21_decimal dec1 = {{1, 0, 0, 0}};
-    printf("%d %d %d %d\n", dec1.bits[0], dec1.bits[1], dec1.bits[2], dec1.bits[3]);
-    s21_decimal dec2 = {0};
-    set_exp(&dec1, 0);
-    set_exp(&dec2, 0);
-    set_sign(&dec1, 0);
-    set_sign(&dec2, 0);
-    dec1.bits[0] = 2097152;
-    dec2.bits[0] = 2048;
-    s21_mul(dec1, dec2, &dec2);
-    dec1.bits[0] = 78125;
-    set_exp(&dec1, 7);
-    // dec1.bits[2] = 0b11111111111111111111111111111111;
-    // dec1.bits[1] = 0b11111111111111111111111111111111;
-    // dec1.bits[0] = 0b11111111111111111111111111111111;
-    // dec2.bits[2] = 0b01111111111111111111111111111111;
-    // dec2.bits[1] = 0b11111111111111111111111111111111;
-    // dec2.bits[0] = 0b11111111111111111111111111111110;
-    printf("%s\n", dectostr(dec1));
-    printf("%s\n", dectostr(dec2));
-    printf("err = %d\n", s21_div(dec1, dec2, &res));
-    printf("%s\n", dectostr(res));
-    
-  // 6859070.7569223461716587002356
-  s21_decimal dec_check = {{0xdd3539f4, 0xf1893fda, 0xdda0e74b, 0x160000}};
+//     // s21_decimal dec1 = {{1, 0, 0, 0}};
+//     // printf("%d %d %d %d\n", dec1.bits[0], dec1.bits[1], dec1.bits[2], dec1.bits[3]);
+//     // s21_decimal dec2 = {0};
+//     // set_exp(&dec1, 0);
+//     // set_exp(&dec2, 0);
+//     // set_sign(&dec1, 0);
+//     // set_sign(&dec2, 0);
+//     // dec1.bits[0] = 2097152;
+//     // dec2.bits[0] = 2048;
+//     // s21_mul(dec1, dec2, &dec2);
+//     // dec1.bits[0] = 78125;
+//     // set_exp(&dec1, 7);
+//     // dec1.bits[2] = 0b11111111111111111111111111111111;
+//     // dec1.bits[1] = 0b11111111111111111111111111111111;
+//     // dec1.bits[0] = 0b11111111111111111111111111111111;
+//     // dec2.bits[2] = 0b01111111111111111111111111111111;
+//     // dec2.bits[1] = 0b11111111111111111111111111111111;
+//     // dec2.bits[0] = 0b11111111111111111111111111111110;
+//     printf("%s\n", dectostr(dec1));
+//     printf("%s\n", dectostr(dec2));
+//     printf("err = %d\n", s21_add(dec1, dec2, &res));
+//     printf("%s\n", dectostr(res));
 
-    printf("%s\n", dectostr(dec_check));
-    dec3.bits[0] = 0b11111111111111111111111111111111;
-    dec3.bits[1] = 0b11111111111111111111111111111111;
-    dec3.bits[2] = 0b11111111111111111111111111111111;
-    printf("%s\n", dectostr(dec3));
-    return 0;
-}
+//     printf("%s\n", dectostr(dec_check));
+//     dec3.bits[0] = 0b11111111111111111111111111111111;
+//     dec3.bits[1] = 0b11111111111111111111111111111111;
+//     dec3.bits[2] = 0b11111111111111111111111111111111;
+//     printf("%s\n", dectostr(dec3));
+//     return 0;
+// }
