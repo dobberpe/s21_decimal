@@ -32,22 +32,24 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
             int_bits = f.bits << (9 + e % (e > 63 ? 63 : 31) - 1);
             dst->bits[e / 32 - 1] = int_bits;
         } else { // пока для экспоненты в пределах одного инта
-            s21_decimal int_part = {0, 0, 0, 0};
-            s21_decimal frac_part = {0, 0, 0, 0};
-            s21_decimal two = {2, 0, 0, 0};
+            s21_decimal int_part = {0};
+            s21_decimal frac_part = {0};
+            s21_decimal two = {{2, 0, 0, 0}};
             s21_decimal tmp;
             if (e >= 0) {
-                unsigned int_bits = ((f.bits << 9) >> (9 + (23 - e))) | ((unsigned)1 << e);
+                unsigned int_bits = (f.bits << 9) >> 9;
+                int_bits = (int_bits >> 23 - e) | ((unsigned)1 << e);
                 int_part.bits[0] = int_bits;
             } else {
                 if (!(res = s21_pow(two, e, &tmp))) {
                     res = s21_add(frac_part, tmp, &frac_part);
                 }
+                --e;
             }
 
             unsigned mask = ((unsigned)1 << 22) >> (e > 0 ? e : 0);
             e = e >= 0 ? -1 : e;
-            while (mask && !res) {
+            while (mask && e > -94 && !res) {
                 if (mask & f.bits) {
                     if (!(res = s21_pow(two, e, &tmp))) { // декомпозировать вложенность!!!
                         res = s21_add(frac_part, tmp, &frac_part);
@@ -128,3 +130,17 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     }
     return res;
 }
+
+int main() {
+    f_bits f = {powf(2, 24) - 1};
+    s21_decimal d;
+    for (int i = -94; i < 97; ++i) {
+        printf("i: %d\n", i);
+        f.bits = f.bits & ~(0xff << 23);
+        f.bits |= (unsigned)(i + 127) << 23;
+        s21_from_float_to_decimal(f.full, &d);
+        printf("%s\n", dectostr(d));
+        printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
+    }
+    return 0;
+};

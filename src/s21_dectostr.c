@@ -32,19 +32,6 @@ char* dectostr(const s21_decimal dec) {
     return str;
 }
 
-int extract_exp(const unsigned bits) {
-    unsigned mask = 1 << 16;
-    int e = 0;
-    int power = -1;
-
-    while (++power <= 8) {
-        e += (bits & mask) ? pow(2, power) : 0;
-        mask <<= 1;
-    }
-
-    return e;
-}
-
 char *calculate_decimal(char *str, const unsigned *bits) {
     int i = -1;
     unsigned mask = 1;
