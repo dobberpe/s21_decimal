@@ -10,7 +10,7 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
         if (sign) {
             s21_decimal one = {1, 0, 0, 0};
             while (exp--) mantiss_mult_by_10(one, &one);
-            s21_decimal rem = mantiss_devision(value, one, &value);
+            s21_decimal rem = mantiss_division(value, one, &value);
             if (!zero_check(rem)) {
                 s21_decimal one1 = {1, 0, 0, 0};
                 mantiss_sum(value, one1, &value);
@@ -37,9 +37,9 @@ int s21_round(s21_decimal value, s21_decimal *result) {
         int i = exp;
         s21_decimal one = {1, 0, 0, 0};
         while (i--) mantiss_mult_by_10(one, &one);
-        s21_decimal rem = mantiss_devision(value, one, &value);
+        s21_decimal rem = mantiss_division(value, one, &value);
         if (!zero_check(rem)) {
-            one = mantiss_dev_by_10_with_rownd(one);
+            one = mantiss_dev_by_10_with_round(one);
             s21_decimal five = {5, 0, 0, 0};
             mantiss_multiply(one, five, &one);
             if (mantiss_compare(one, rem) != 1) {
@@ -65,7 +65,7 @@ int s21_truncate(s21_decimal value, s21_decimal *result) {
         s21_decimal ten = {0};
         ten.bits[0] = 10;
         while (exp--)
-            mantiss_devision(value, ten, &value);
+            mantiss_division(value, ten, &value);
         set_exp(&value, 0);
         set_sign(&value, sign);
         *result = value;

@@ -19,7 +19,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   }
   set_sign(&value_1, sign_1);
   while (exp_1 != exp_2) {
-    value_2 = mantiss_dev_by_10_with_rownd(value_2);
+    value_2 = mantiss_dev_by_10_with_round(value_2);
     exp_2--;
   }
   set_sign(&value_2, sign_2);
@@ -29,8 +29,8 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   if (get_sign(value_1) == get_sign(value_2)) {
     overflow = mantiss_sum(value_1, value_2, result);
     while (exp_1 && overflow) {
-      value_1 = mantiss_dev_by_10_with_rownd(value_1);
-      value_2 = mantiss_dev_by_10_with_rownd(value_2);
+      value_1 = mantiss_dev_by_10_with_round(value_1);
+      value_2 = mantiss_dev_by_10_with_round(value_2);
       overflow = mantiss_sum(value_1, value_2, result);
       exp_1--;
     }
@@ -55,7 +55,7 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL)
     return 1;
-  clear_mantiss(result);
+  clear_decimal(result);
   int overflow = 0;
   int new_sign = get_sign(value_1) ^ get_sign(value_2);
   int new_exp = get_exp(value_1) + get_exp(value_2);
@@ -65,17 +65,17 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   value_2.bits[3] = 0;
   while (!zero_check(value_2) && !overflow) {
     s21_decimal tmp = {0}, tmp2 = {0};
-    s21_decimal rem = mantiss_devision(value_2, ten, &value_2);
+    s21_decimal rem = mantiss_division(value_2, ten, &value_2);
     mantiss_multiply(rem, exp, &rem);
     overflow = mantiss_multiply(value_1, rem, &tmp);
     while (overflow && !zero_check(value_1) && new_exp > 0) {
       if (exp.bits[0] == 1) {
-        value_1 = mantiss_dev_by_10_with_rownd(value_1);
+        value_1 = mantiss_dev_by_10_with_round(value_1);
       } else {
-        rem = mantiss_dev_by_10_with_rownd(rem);
-        exp = mantiss_dev_by_10_with_rownd(exp);
+        rem = mantiss_dev_by_10_with_round(rem);
+        exp = mantiss_dev_by_10_with_round(exp);
       }
-      *result = mantiss_dev_by_10_with_rownd(*result);
+      *result = mantiss_dev_by_10_with_round(*result);
       new_exp--;
       overflow = mantiss_multiply(value_1, rem, &tmp);
     }
@@ -84,9 +84,9 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       overflow = mantiss_sum(*result, tmp, &tmp2);
       while (overflow && !zero_check(tmp) && !zero_check(*result) &&
              new_exp > 0) {
-        tmp = mantiss_dev_by_10_with_rownd(tmp);
-        *result = mantiss_dev_by_10_with_rownd(*result);
-        exp = mantiss_dev_by_10_with_rownd(exp);
+        tmp = mantiss_dev_by_10_with_round(tmp);
+        *result = mantiss_dev_by_10_with_round(*result);
+        exp = mantiss_dev_by_10_with_round(exp);
         overflow = mantiss_sum(*result, tmp, &tmp2);
         new_exp--;
       }
@@ -103,15 +103,15 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL)
     return 1;
   if (zero_check(value_2)) return 3;
-  clear_mantiss(result);
+  clear_decimal(result);
   int overflow = 0, cont = 1;
   int new_sign = get_sign(value_1) ^ get_sign(value_2);
   if (!zero_check(value_1)) {
     int new_exp = get_exp(value_1) - get_exp(value_2);
-    s21_decimal remainder = {1, 0, 0, 0};
+    s21_decimal remainder = {{1, 0, 0, 0}};
     while (new_exp <= 28 && !overflow && !zero_check(remainder) && cont) {
       s21_decimal tmp = {0};
-      remainder = mantiss_devision(value_1, value_2, &tmp);
+      remainder = mantiss_division(value_1, value_2, &tmp);
       while (zero_check(tmp) && new_exp <= 28 && !overflow) {
         if (!mantiss_mult_by_10(value_1, &tmp)) {
           value_1 = tmp;
@@ -120,25 +120,16 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
           else
             break;
         } else {
-          value_2 = mantiss_dev_by_10_with_rownd(value_2);
+          value_2 = mantiss_dev_by_10_with_round(value_2);
         }
         new_exp++;
         if (zero_check(value_2)) overflow = 1;
-        remainder = mantiss_devision(value_1, value_2, &tmp);
+        remainder = mantiss_division(value_1, value_2, &tmp);
       }
       if (zero_check(tmp) && zero_check(*result) && new_exp >= 28) overflow = 1;
       if (!mantiss_sum(*result, tmp, &tmp)) *result = tmp;
-      if (mantiss_mult_by_10(*result, &tmp) || new_exp >= 28) {
-        mantiss_mult_by_10(remainder, &remainder);
-        mantiss_devision(remainder, value_2, &tmp);
-        s21_decimal ten = {10, 0, 0, 0};
-        s21_decimal round = mantiss_devision(tmp, ten, &tmp);
-        if (round.bits[0] >= 5) {
-          ten.bits[0] = 1;
-          mantiss_sum(*result, ten, result);
-        }
-        cont = 0;
-      }
+      if (mantiss_mult_by_10(*result, &tmp) || new_exp >= 28)
+        cont = mantiss_round(result, remainder, value_2);
       if (!zero_check(remainder) && !mantiss_mult_by_10(*result, &tmp) &&
           !overflow && new_exp <= 28 && cont) {
         *result = tmp;
@@ -153,7 +144,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     overflow = overflow ? overflow : exponent_eval(result, new_exp);
   }
   set_sign(result, new_sign);
-  if (overflow) clear_mantiss(result);
+  if (overflow) clear_decimal(result);
   return overflow ? overflow + new_sign : 0;
 }
 

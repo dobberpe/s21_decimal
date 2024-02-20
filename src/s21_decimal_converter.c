@@ -32,9 +32,9 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
             int_bits = f.bits << (9 + e % (e > 63 ? 63 : 31) - 1);
             dst->bits[e / 32 - 1] = int_bits;
         } else { // пока для экспоненты в пределах одного инта
-            s21_decimal int_part = {0, 0, 0, 0};
-            s21_decimal frac_part = {0, 0, 0, 0};
-            s21_decimal two = {2, 0, 0, 0};
+            s21_decimal int_part = {0};
+            s21_decimal frac_part = {0};
+            s21_decimal two = {{2, 0, 0, 0}};
             s21_decimal tmp;
             if (e >= 0) {
                 unsigned int_bits = ((f.bits << 9) >> (9 + (23 - e))) | ((unsigned)1 << e);
@@ -80,51 +80,51 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) { // нужен truncate
     return res;
 }
 
-int s21_from_decimal_to_float(s21_decimal src, float *dst) {
-    int res = 0;
-    f_bits f;
-    f.bits = 0;
-    s21_decimal int_part;
-    s21_decimal frac_part;
-    s21_truncate(src, &int_part);
-    s21_sub(src, int_part, &frac_part);
+// int s21_from_decimal_to_float(s21_decimal src, float *dst) {
+//     int res = 0;
+//     f_bits f;
+//     f.bits = 0;
+//     s21_decimal int_part;
+//     s21_decimal frac_part;
+//     s21_truncate(src, &int_part);
+//     s21_sub(src, int_part, &frac_part);
 
-    s21_decimal zero = {0, 0, 0, 0};
-    int pos = -1;
-    if (s21_is_not_equal(int_part, zero)) {
-        pos = 95 - mantiss_prev_nulls(int_part);
-        set_bit(&int_part, pos, 0);
-        f.bits = (pos + 127) << 24;
-        f.bits |= get_sign(int_part) ? (1 << 31) : 0;
-        if ((pos % 32 >= 23 && pos % 32 <= 31) || pos < 23) {
-            f.bits |= pos < 23 ? int_part.bits[pos / 32] << (23 - pos) : int_part.bits[pos / 32] >> (pos - 23);
-        } else {
-            f.bits |= int_part.bits[pos / 32] << (23 - pos % 32);
-            f.bits |= int_part.bits[pos / 32 - 1] >> (9 + pos % 32); // 32 - 23 + pos % 32
-        }
-    }
-    if (pos < 23 && s21_is_not_equal(frac_part, zero)) {
-        s21_decimal two = {2, 0, 0, 0};
-        if (pos == -1) {
-            pos = 24;
-            bool sign_bits = false;
-            while (pos) {
-                s21_mul(frac_part, two, &frac_part);
-                s21_truncate(frac_part, &int_part);
-                s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= pos != 24 ? (int_part.bits[0] << (pos - 1)) : 0;
-                if ((sign_bits = int_part.bits[0] ? true : sign_bits)) --pos;
-            }
-        } else {
-            pos = 23 - pos;
-            while (pos) {
-                s21_mul(frac_part, two, &frac_part);
-                s21_truncate(frac_part, &int_part);
-                s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= int_part.bits[0] /*<< pos*/;
-                --pos;
-            }
-        }
-    }
-    return res;
-}
+//     s21_decimal zero = {0};
+//     int pos = -1;
+//     if (s21_is_not_equal(int_part, zero)) {
+//         pos = 95 - mantiss_prev_nulls(int_part);
+//         set_bit(&int_part, pos, 0);
+//         f.bits = (pos + 127) << 24;
+//         f.bits |= get_sign(int_part) ? (1 << 31) : 0;
+//         if ((pos % 32 >= 23 && pos % 32 <= 31) || pos < 23) {
+//             f.bits |= pos < 23 ? int_part.bits[pos / 32] << (23 - pos) : int_part.bits[pos / 32] >> (pos - 23);
+//         } else {
+//             f.bits |= int_part.bits[pos / 32] << (23 - pos % 32);
+//             f.bits |= int_part.bits[pos / 32 - 1] >> (9 + pos % 32); // 32 - 23 + pos % 32
+//         }
+//     }
+//     if (pos < 23 && s21_is_not_equal(frac_part, zero)) {
+//         s21_decimal two = {{2, 0, 0, 0}};
+//         if (pos == -1) {
+//             pos = 24;
+//             bool sign_bits = false;
+//             while (pos) {
+//                 s21_mul(frac_part, two, &frac_part);
+//                 s21_truncate(frac_part, &int_part);
+//                 s21_sub(frac_part, int_part, &frac_part);
+//                 f.bits |= pos != 24 ? (int_part.bits[0] << (pos - 1)) : 0;
+//                 if ((sign_bits = int_part.bits[0] ? true : sign_bits)) --pos;
+//             }
+//         } else {
+//             pos = 23 - pos;
+//             while (pos) {
+//                 s21_mul(frac_part, two, &frac_part);
+//                 s21_truncate(frac_part, &int_part);
+//                 s21_sub(frac_part, int_part, &frac_part);
+//                 f.bits |= int_part.bits[0] /*<< pos*/;
+//                 --pos;
+//             }
+//         }
+//     }
+//     return res;
+// }
