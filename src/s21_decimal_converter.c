@@ -110,12 +110,20 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
         if (pos == -1) {
             pos = 24;
             bool sign_bits = false;
+            int e;
             while (pos) {
+                printf("%s * %d = ", dectostr(frac_part), 2);
                 s21_mul(frac_part, two, &frac_part);
+                printf("%s\n", dectostr(frac_part));
                 s21_truncate(frac_part, &int_part);
                 s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= pos != 24 ? (frac_part.bits[0] << (pos - 1)) : 0;
-                if ((sign_bits = frac_part.bits[0] ? true : sign_bits)) --pos;
+                printf("int: %s\nfrc: %s\n\n", dectostr(int_part), dectostr(frac_part));
+                f.bits |= pos != 24 ? (int_part.bits[0] << (pos - 1)) : 0;
+                if (!sign_bits && int_part.bits[0]) {
+                    sign_bits = true;
+                    e = pos - 1;
+                }
+                if (sign_bits) --pos;
             }
         } else {
             pos = 23 - pos;
@@ -132,15 +140,26 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
 }
 
 int main() {
-    f_bits f = {powf(2, 24) - 1};
+//    f_bits f = {powf(2, 24) - 1};
+//    s21_decimal d;
+//    for (int i = -94; i < 97; ++i) {
+//        printf("i: %d\n", i);
+//        f.bits = f.bits & ~(0xff << 23);
+//        f.bits |= (unsigned)(i + 127) << 23;
+//        s21_from_float_to_decimal(f.full, &d);
+//        printf("%s\n", dectostr(d));
+//        printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
+//    }
+    float f = powf(2, -93);
     s21_decimal d;
-    for (int i = -94; i < 97; ++i) {
-        printf("i: %d\n", i);
-        f.bits = f.bits & ~(0xff << 23);
-        f.bits |= (unsigned)(i + 127) << 23;
-        s21_from_float_to_decimal(f.full, &d);
-        printf("%s\n", dectostr(d));
-        printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
+    s21_from_float_to_decimal(f, &d);
+//    printf("%s\n", dectostr(d));
+    for (int i = 9; i < 10; ++i) {
+        s21_decimal tmp;
+        s21_from_int_to_decimal(i, &tmp);
+        s21_mul(d, tmp, &tmp);
+        s21_from_decimal_to_float(tmp, &f);
+        printf("%s\n%.28f\n\n", dectostr(tmp), f);
     }
     return 0;
 };
