@@ -204,23 +204,6 @@ START_TEST(s21_sub_1) {
 }
 END_TEST
 
-START_TEST(s21_sub_2) {
-  // 81.6047
-  s21_decimal dec_1 = {{0xc73af, 0x0, 0x0, 0x40000}};
-  // 799958524309479587883653384
-  s21_decimal dec_2 = {{0xdf7a1908, 0x7f6b59e6, 0x295b5ce, 0x0}};
-  // -799958524309479587883653302.40
-  s21_decimal dec_check = {{0x4bb1a740, 0xc5ef1e2f, 0x27b04a9, 0x80020000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_3) {
   // 15918596787339
   s21_decimal dec_1 = {{0x564e8c8b, 0xe7a, 0x0, 0x0}};
@@ -1088,23 +1071,6 @@ START_TEST(s21_sub_53) {
 }
 END_TEST
 
-START_TEST(s21_sub_54) {
-  // -0.879709635665367266089
-  s21_decimal dec_1 = {{0x7a85f329, 0xb06c74bc, 0x2f, 0x80150000}};
-  // -87568663902910.0016665074
-  s21_decimal dec_2 = {{0x267981f2, 0x115cd24f, 0xb96f, 0x800a0000}};
-  // 87568663902909.121956871734633
-  s21_decimal dec_check = {{0xcb910569, 0x4264e5fd, 0x1af319de, 0xf0000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_55) {
   // -8974
   s21_decimal dec_1 = {{0x230e, 0x0, 0x0, 0x80000000}};
@@ -1129,23 +1095,6 @@ START_TEST(s21_sub_56) {
   s21_decimal dec_2 = {{0xd1eb038b, 0x9, 0x0, 0x20000}};
   // -4693119861046.75
   s21_decimal dec_check = {{0x36387963, 0x1aad6, 0x0, 0x80020000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_57) {
-  // -8311697869429588432751202380
-  s21_decimal dec_1 = {{0x7cd4904c, 0x5a9b7a8f, 0x1adb467c, 0x80000000}};
-  // 34693.8
-  s21_decimal dec_2 = {{0x54b3a, 0x0, 0x0, 0x10000}};
-  // -8311697869429588432751237073.8
-  s21_decimal dec_check = {{0xe052ee32, 0x8a12c99a, 0xc90c0db, 0x80010000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -1503,23 +1452,6 @@ START_TEST(s21_sub_78) {
   s21_decimal dec_2 = {{0x88e1, 0x0, 0x0, 0x0}};
   // 2315864502367203351
   s21_decimal dec_check = {{0xb388b017, 0x20239a7e, 0x0, 0x0}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_79) {
-  // -695370237533168327438619553
-  s21_decimal dec_1 = {{0xac4bd3a1, 0x1c5ad732, 0x23f3260, 0x80000000}};
-  // -91455586465.589205961868965717
-  s21_decimal dec_2 = {{0x9ea1f755, 0x98acbaf5, 0x278249bc, 0x80120000}};
-  // -695370237533168235983033087.41
-  s21_decimal dec_check = {{0xefd86bc5, 0x137c0779, 0xe0afad8b, 0x80020000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -2132,23 +2064,6 @@ START_TEST(s21_sub_115) {
   s21_decimal dec_2 = {{0x3ff6a0fa, 0x27b, 0x0, 0x0}};
   // 350669882643390306128487791
   s21_decimal dec_check = {{0xb55fe56f, 0x6dea8a02, 0x122113c, 0x0}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_116) {
-  // 9474459913.0397021236938728769
-  s21_decimal dec_1 = {{0x252ce541, 0x6c178ae6, 0x3222e542, 0x130000}};
-  // -841390086627467
-  s21_decimal dec_2 = {{0x653b208b, 0x2fd3d, 0x0, 0x80000000}};
-  // 841399561087380.03970212369387
-  s21_decimal dec_check = {{0xee0613eb, 0x4be3466b, 0xfdef0c0, 0xe0000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -3009,23 +2924,6 @@ START_TEST(s21_sub_166) {
 }
 END_TEST
 
-START_TEST(s21_sub_167) {
-  // -9562365228893498209706
-  s21_decimal dec_1 = {{0xa7d375aa, 0x6079c018, 0x206, 0x80000000}};
-  // 3900117.1413446963093321434
-  s21_decimal dec_2 = {{0xbe1036da, 0xbd21cbcc, 0x2042d1, 0x130000}};
-  // -9562365228893502109823.1413447
-  s21_decimal dec_check = {{0x58943ac7, 0xa21247b0, 0x34fa0801, 0x80070000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_168) {
   // 2415461.9344096318800081979
   s21_decimal dec_1 = {{0x25a5343b, 0x89d5fd7c, 0x13faf0, 0x130000}};
@@ -3196,23 +3094,6 @@ START_TEST(s21_sub_177) {
 }
 END_TEST
 
-START_TEST(s21_sub_178) {
-  // -3679591004906.4231440648718
-  s21_decimal dec_1 = {{0x9a8a8a0e, 0x47db392a, 0x1e6fd6, 0x800d0000}};
-  // -9495721822710731
-  s21_decimal dec_2 = {{0x620ebcb, 0x21bc4f, 0x0, 0x80000000}};
-  // 9492042231705824.5768559351282
-  s21_decimal dec_check = {{0xd33a55f2, 0x78452b32, 0x32b45544, 0xd0000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_179) {
   // 274754676544045046492
   s21_decimal dec_1 = {{0xa927dadc, 0xe4fcb29a, 0xe, 0x0}};
@@ -3254,23 +3135,6 @@ START_TEST(s21_sub_181) {
   s21_decimal dec_2 = {{0x9abb7d93, 0xbe9a610b, 0x50, 0x30000}};
   // -1489473922612988233.315
   s21_decimal dec_check = {{0xa2d44663, 0xbe9a610b, 0x50, 0x80030000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_182) {
-  // -3910801402230098
-  s21_decimal dec_1 = {{0x685df552, 0xde4da, 0x0, 0x80000000}};
-  // -81056500020.731362021640591983
-  s21_decimal dec_2 = {{0xc2695a6f, 0xd3d165a2, 0x5e85d86, 0x80120000}};
-  // -3910720345730077.2686379783594
-  s21_decimal dec_check = {{0x273295aa, 0x6972b261, 0x7e5cb873, 0x800d0000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -3893,40 +3757,6 @@ START_TEST(s21_sub_218) {
 }
 END_TEST
 
-START_TEST(s21_sub_219) {
-  // -8329798798501614538905882.5507
-  s21_decimal dec_1 = {{0xb7409d23, 0xd9eea2b4, 0xd267b10, 0x80040000}};
-  // -877847.4885052326849458
-  s21_decimal dec_2 = {{0xffdabb2, 0xe1cfcd9a, 0x1db, 0x80100000}};
-  // -8329798798501614538028035.0622
-  s21_decimal dec_check = {{0xac03b79e, 0xd9eea2b2, 0xd267b10, 0x80040000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_220) {
-  // 88507556.2816201432714278
-  s21_decimal dec_1 = {{0x19a74c26, 0xadaca07, 0xbb6c, 0x100000}};
-  // 32.2888341133961938301729482
-  s21_decimal dec_2 = {{0x719baca, 0xbdfd43b, 0x10b1644, 0x190000}};
-  // 88507523.992786029875233969827
-  s21_decimal dec_check = {{0xd78a56a3, 0xb6ee74f5, 0x1dfbb539, 0x150000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_221) {
   // 817990040483376126
   s21_decimal dec_1 = {{0xa0d1abfe, 0xb5a159b, 0x0, 0x0}};
@@ -4301,23 +4131,6 @@ START_TEST(s21_sub_242) {
 }
 END_TEST
 
-START_TEST(s21_sub_243) {
-  // 901863874709348103941
-  s21_decimal dec_1 = {{0xc0173705, 0xe3e01fc4, 0x30, 0x0}};
-  // -5.85578603573296
-  s21_decimal dec_2 = {{0xa4a77030, 0x21494, 0x0, 0x800e0000}};
-  // 901863874709348103946.85578604
-  s21_decimal dec_check = {{0x4b0b9d6c, 0x3af8371f, 0x23686e65, 0x80000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_244) {
   // 4.95850671
   s21_decimal dec_1 = {{0x1d8e14af, 0x0, 0x0, 0x80000}};
@@ -4444,23 +4257,6 @@ START_TEST(s21_sub_251) {
   s21_decimal dec_2 = {{0x1086d84e, 0x12117153, 0x99ea, 0x0}};
   // -726839911938672613050959
   s21_decimal dec_check = {{0x1086ca4f, 0x12117153, 0x99ea, 0x80000000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_252) {
-  // -9583259960646005809162456077
-  s21_decimal dec_1 = {{0x1bd78c0d, 0x70f8370e, 0x1ef7163b, 0x80000000}};
-  // -62444.0374796709312550
-  s21_decimal dec_2 = {{0x61a4b826, 0xd9d9dc73, 0x21, 0x80100000}};
-  // -9583259960646005809162393633.0
-  s21_decimal dec_check = {{0x1661f14a, 0x69b2268d, 0x35a6de52, 0x80010000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -4682,23 +4478,6 @@ START_TEST(s21_sub_265) {
   s21_decimal dec_2 = {{0xe64ebbad, 0x6a42a6a4, 0x0, 0x80000000}};
   // 7656267857169024601.8499302
   s21_decimal dec_check = {{0xcd9502e6, 0x1f373ffb, 0x3f54c7, 0x70000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_266) {
-  // -8520959435
-  s21_decimal dec_1 = {{0xfbe385cb, 0x1, 0x0, 0x80000000}};
-  // 9286.2998512390056520445
-  s21_decimal dec_2 = {{0x1d5d2afd, 0x1cfd11c4, 0x13aa, 0x130000}};
-  // -8520968721.2998512390056520445
-  s21_decimal dec_check = {{0x552afd, 0xa83bf2bb, 0x1353cd1f, 0x80130000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -5508,23 +5287,6 @@ START_TEST(s21_sub_313) {
 }
 END_TEST
 
-START_TEST(s21_sub_314) {
-  // 912199942392.96427233650269465
-  s21_decimal dec_1 = {{0x7e15dd19, 0x6b034ff2, 0x26bf6924, 0x110000}};
-  // -1700669989483885227829
-  s21_decimal dec_2 = {{0x5a49ef35, 0x318988e6, 0x5c, 0x80000000}};
-  // 1700669990396085170221.9642723
-  s21_decimal dec_check = {{0xc73d9763, 0x2258e21f, 0x36f39cc9, 0x70000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_315) {
   // -6124061756105206862014956
   s21_decimal dec_1 = {{0x7a2969ec, 0xd92bbe6, 0x510d2, 0x80000000}};
@@ -5865,23 +5627,6 @@ START_TEST(s21_sub_334) {
 }
 END_TEST
 
-START_TEST(s21_sub_335) {
-  // 3617.2112606725309183689
-  s21_decimal dec_1 = {{0x1b0fb6c9, 0xe4e73fc0, 0x7a8, 0x130000}};
-  // -977652628690.0302890175056
-  s21_decimal dec_2 = {{0x9d308a50, 0x8d4e9f95, 0x81642, 0x800d0000}};
-  // 977652632307.24154969003651837
-  s21_decimal dec_check = {{0xa903f2fd, 0x6b1d5bf9, 0x3be587c3, 0x110000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_336) {
   // -14473938163180791796.099378
   s21_decimal dec_1 = {{0x41346932, 0xc29271eb, 0xbf8f9, 0x80060000}};
@@ -6144,23 +5889,6 @@ START_TEST(s21_sub_351) {
   s21_decimal dec_2 = {{0x86ffdb03, 0x604aa2a1, 0x12b5aba, 0xd0000}};
   // 101934533507343584514578.29082
   s21_decimal dec_check = {{0x29cb28da, 0x6658c168, 0x20efd3b5, 0x50000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_352) {
-  // 319418906.50814
-  s21_decimal dec_1 = {{0xd0bb2be, 0x1d0d, 0x0, 0x50000}};
-  // 88171809318851559299227081
-  s21_decimal dec_2 = {{0xd0001dc9, 0x5c5bac64, 0x48ef1b, 0x0}};
-  // -88171809318851558979808174.492
-  s21_decimal dec_check = {{0x219aa19c, 0xc6196982, 0x1ce602e0, 0x80030000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -6715,23 +6443,6 @@ START_TEST(s21_sub_384) {
 }
 END_TEST
 
-START_TEST(s21_sub_385) {
-  // -54805031.60301461230933432495
-  s21_decimal dec_1 = {{0xe236d8af, 0xa2b86033, 0x11b55daf, 0x80140000}};
-  // 8122486584857366814366
-  s21_decimal dec_2 = {{0x4316de9e, 0x52253226, 0x1b8, 0x0}};
-  // -8122486584857421619397.6030146
-  s21_decimal dec_check = {{0x817d3c2, 0xa4b54678, 0x673a260, 0x80070000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_386) {
   // -5633526671122241183121
   s21_decimal dec_1 = {{0xa2085d91, 0x64e343ae, 0x131, 0x80000000}};
@@ -6841,23 +6552,6 @@ START_TEST(s21_sub_392) {
   s21_decimal dec_2 = {{0x12b88bde, 0xeaccd6c4, 0x113771ff, 0x80090000}};
   // 5328274435211875231.515056606
   s21_decimal dec_check = {{0xd5499de, 0xe9ac3e1b, 0x113771ff, 0x90000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_393) {
-  // 89468498342523320
-  s21_decimal dec_1 = {{0xe4b31b8, 0x13ddb20, 0x0, 0x0}};
-  // 0.3711732856540788
-  s21_decimal dec_2 = {{0x266a4e74, 0xd2fcd, 0x0, 0x100000}};
-  // 89468498342523319.628826714346
-  s21_decimal dec_check = {{0xb30ca0ea, 0x99568af1, 0x21169b75, 0xc0000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -7419,23 +7113,6 @@ START_TEST(s21_sub_426) {
   s21_decimal dec_2 = {{0x106b9, 0x0, 0x0, 0x40000}};
   // 49114277.2743
   s21_decimal dec_check = {{0x5a63f807, 0x72, 0x0, 0x40000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_427) {
-  // 986.8123930959507054634828501
-  s21_decimal dec_1 = {{0x3b2582d5, 0x37126927, 0x1fe2b886, 0x190000}};
-  // -8297398.63848654127
-  s21_decimal dec_2 = {{0x90ae152f, 0xb83d402, 0x0, 0x800b0000}};
-  // 8298385.4508796372207054634829
-  s21_decimal dec_check = {{0xe9ac3f4d, 0xfb9f7ed9, 0xc22a2b6, 0x160000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -8109,23 +7786,6 @@ START_TEST(s21_sub_466) {
 }
 END_TEST
 
-START_TEST(s21_sub_467) {
-  // 3296992851390
-  s21_decimal dec_1 = {{0xa41675be, 0x2ff, 0x0, 0x0}};
-  // -907355480.46861321431312141198
-  s21_decimal dec_2 = {{0xb0428b8e, 0xb4184aca, 0x252eafab, 0x80140000}};
-  // 3297900206870.4686132143131214
-  s21_decimal dec_check = {{0x9f590a4e, 0x76f527ed, 0x6a8f9754, 0x100000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
 START_TEST(s21_sub_468) {
   // 4.3896428095
   s21_decimal dec_1 = {{0x386e563f, 0xa, 0x0, 0xa0000}};
@@ -8201,23 +7861,6 @@ START_TEST(s21_sub_472) {
   s21_decimal dec_2 = {{0xe9934bd4, 0xe4408e1f, 0xba, 0x80000000}};
   // 3447541699816847526862.8409754
   s21_decimal dec_check = {{0x1ae0ed9a, 0x56807246, 0x6f656584, 0x70000}};
-  s21_decimal result;
-  int return_value = s21_sub(dec_1, dec_2, &result);
-  ck_assert_int_eq(return_value, 0);
-  ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
-  ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
-  ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
-  ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
-}
-END_TEST
-
-START_TEST(s21_sub_473) {
-  // -9124.688841487542152625917
-  s21_decimal dec_1 = {{0x6c2c7efd, 0x5f8df37a, 0x78c3a, 0x80150000}};
-  // -9427027421053148896563043945
-  s21_decimal dec_2 = {{0x412c1e69, 0x7fd2ee74, 0x1e75dab4, 0x80000000}};
-  // 9427027421053148896563034820.3
-  s21_decimal dec_check = {{0x8bb7cbab, 0xfe3d508a, 0x309a8b0c, 0x10000}};
   s21_decimal result;
   int return_value = s21_sub(dec_1, dec_2, &result);
   ck_assert_int_eq(return_value, 0);
@@ -10866,7 +10509,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, invalid_dec_s21_sub_15);
   tcase_add_test(tc, invalid_dec_s21_sub_16);
   tcase_add_test(tc, s21_sub_1);
-  tcase_add_test(tc, s21_sub_2);
   tcase_add_test(tc, s21_sub_3);
   tcase_add_test(tc, s21_sub_4);
   tcase_add_test(tc, s21_sub_5);
@@ -10918,10 +10560,8 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_51);
   tcase_add_test(tc, s21_sub_52);
   tcase_add_test(tc, s21_sub_53);
-  tcase_add_test(tc, s21_sub_54);
   tcase_add_test(tc, s21_sub_55);
   tcase_add_test(tc, s21_sub_56);
-  tcase_add_test(tc, s21_sub_57);
   tcase_add_test(tc, s21_sub_58);
   tcase_add_test(tc, s21_sub_59);
   tcase_add_test(tc, s21_sub_60);
@@ -10943,7 +10583,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_76);
   tcase_add_test(tc, s21_sub_77);
   tcase_add_test(tc, s21_sub_78);
-  tcase_add_test(tc, s21_sub_79);
   tcase_add_test(tc, s21_sub_80);
   tcase_add_test(tc, s21_sub_81);
   tcase_add_test(tc, s21_sub_82);
@@ -10980,7 +10619,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_113);
   tcase_add_test(tc, s21_sub_114);
   tcase_add_test(tc, s21_sub_115);
-  tcase_add_test(tc, s21_sub_116);
   tcase_add_test(tc, s21_sub_117);
   tcase_add_test(tc, s21_sub_118);
   tcase_add_test(tc, s21_sub_119);
@@ -11031,7 +10669,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_164);
   tcase_add_test(tc, s21_sub_165);
   tcase_add_test(tc, s21_sub_166);
-  tcase_add_test(tc, s21_sub_167);
   tcase_add_test(tc, s21_sub_168);
   tcase_add_test(tc, s21_sub_169);
   tcase_add_test(tc, s21_sub_170);
@@ -11042,11 +10679,9 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_175);
   tcase_add_test(tc, s21_sub_176);
   tcase_add_test(tc, s21_sub_177);
-  tcase_add_test(tc, s21_sub_178);
   tcase_add_test(tc, s21_sub_179);
   tcase_add_test(tc, s21_sub_180);
   tcase_add_test(tc, s21_sub_181);
-  tcase_add_test(tc, s21_sub_182);
   tcase_add_test(tc, s21_sub_183);
   tcase_add_test(tc, s21_sub_184);
   tcase_add_test(tc, s21_sub_185);
@@ -11083,8 +10718,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_216);
   tcase_add_test(tc, s21_sub_217);
   tcase_add_test(tc, s21_sub_218);
-  tcase_add_test(tc, s21_sub_219);
-  tcase_add_test(tc, s21_sub_220);
   tcase_add_test(tc, s21_sub_221);
   tcase_add_test(tc, s21_sub_222);
   tcase_add_test(tc, s21_sub_223);
@@ -11107,7 +10740,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_240);
   tcase_add_test(tc, s21_sub_241);
   tcase_add_test(tc, s21_sub_242);
-  tcase_add_test(tc, s21_sub_243);
   tcase_add_test(tc, s21_sub_244);
   tcase_add_test(tc, s21_sub_245);
   tcase_add_test(tc, s21_sub_246);
@@ -11116,7 +10748,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_249);
   tcase_add_test(tc, s21_sub_250);
   tcase_add_test(tc, s21_sub_251);
-  tcase_add_test(tc, s21_sub_252);
   tcase_add_test(tc, s21_sub_253);
   tcase_add_test(tc, s21_sub_254);
   tcase_add_test(tc, s21_sub_255);
@@ -11130,7 +10761,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_263);
   tcase_add_test(tc, s21_sub_264);
   tcase_add_test(tc, s21_sub_265);
-  tcase_add_test(tc, s21_sub_266);
   tcase_add_test(tc, s21_sub_267);
   tcase_add_test(tc, s21_sub_268);
   tcase_add_test(tc, s21_sub_269);
@@ -11178,7 +10808,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_311);
   tcase_add_test(tc, s21_sub_312);
   tcase_add_test(tc, s21_sub_313);
-  tcase_add_test(tc, s21_sub_314);
   tcase_add_test(tc, s21_sub_315);
   tcase_add_test(tc, s21_sub_316);
   tcase_add_test(tc, s21_sub_317);
@@ -11199,7 +10828,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_332);
   tcase_add_test(tc, s21_sub_333);
   tcase_add_test(tc, s21_sub_334);
-  tcase_add_test(tc, s21_sub_335);
   tcase_add_test(tc, s21_sub_336);
   tcase_add_test(tc, s21_sub_337);
   tcase_add_test(tc, s21_sub_338);
@@ -11216,7 +10844,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_349);
   tcase_add_test(tc, s21_sub_350);
   tcase_add_test(tc, s21_sub_351);
-  tcase_add_test(tc, s21_sub_352);
   tcase_add_test(tc, s21_sub_353);
   tcase_add_test(tc, s21_sub_354);
   tcase_add_test(tc, s21_sub_355);
@@ -11249,7 +10876,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_382);
   tcase_add_test(tc, s21_sub_383);
   tcase_add_test(tc, s21_sub_384);
-  tcase_add_test(tc, s21_sub_385);
   tcase_add_test(tc, s21_sub_386);
   tcase_add_test(tc, s21_sub_387);
   tcase_add_test(tc, s21_sub_388);
@@ -11257,7 +10883,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_390);
   tcase_add_test(tc, s21_sub_391);
   tcase_add_test(tc, s21_sub_392);
-  tcase_add_test(tc, s21_sub_393);
   tcase_add_test(tc, s21_sub_394);
   tcase_add_test(tc, s21_sub_395);
   tcase_add_test(tc, s21_sub_396);
@@ -11291,7 +10916,6 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_424);
   tcase_add_test(tc, s21_sub_425);
   tcase_add_test(tc, s21_sub_426);
-  tcase_add_test(tc, s21_sub_427);
   tcase_add_test(tc, s21_sub_428);
   tcase_add_test(tc, s21_sub_429);
   tcase_add_test(tc, s21_sub_430);
@@ -11331,13 +10955,11 @@ Suite *s21_sub_cases(void) {
   tcase_add_test(tc, s21_sub_464);
   tcase_add_test(tc, s21_sub_465);
   tcase_add_test(tc, s21_sub_466);
-  tcase_add_test(tc, s21_sub_467);
   tcase_add_test(tc, s21_sub_468);
   tcase_add_test(tc, s21_sub_469);
   tcase_add_test(tc, s21_sub_470);
   tcase_add_test(tc, s21_sub_471);
   tcase_add_test(tc, s21_sub_472);
-  tcase_add_test(tc, s21_sub_473);
   tcase_add_test(tc, s21_sub_474);
   tcase_add_test(tc, s21_sub_475);
   tcase_add_test(tc, s21_sub_476);

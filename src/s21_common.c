@@ -117,21 +117,26 @@ s21_decimal mantiss_division(s21_decimal value_1, s21_decimal value_2, s21_decim
 }
 
 s21_decimal mantiss_dev_by_10_with_round(s21_decimal dec) {
-    static bool round_factor = true;
+    // printf("be4 = %s\n", dectostr(dec));
+    static bool round_factor = true, more_than_5 = false;
     s21_decimal ten = {0};
     ten.bits[0] = 10;
     s21_decimal rem = mantiss_division(dec, ten, &dec);
-    if (((rem.bits[0] == 5 && get_bit(dec, 0)) && round_factor) || rem.bits[0] > 5) {
+        // printf("rem = %s\n", dectostr(rem));
+    if (((rem.bits[0] == 5 && get_bit(dec, 0)) && round_factor) || rem.bits[0] > 5 || (rem.bits[0] == 5 && more_than_5 && round_factor)) {
         ten.bits[0] = 1;
         mantiss_sum(dec, ten, &dec);
         
         s21_decimal tmp;
         ten.bits[0] = 10;
         rem = mantiss_division(dec, ten, &tmp);
-        if (rem.bits[0] == 5) round_factor = false;
+
+        if (rem.bits[0] == 5 || !rem.bits[0]) round_factor = false;
     } else {
-        round_factor = true;
+        if (rem.bits[0]) round_factor = true;
     }
+    if (!more_than_5 && rem.bits[0]) more_than_5 = true;
+    // printf("aft = %s\n\n", dectostr(dec));
     return dec;
 }
 
@@ -212,12 +217,9 @@ int mantiss_round(s21_decimal *result, s21_decimal remainder, s21_decimal value_
 }
 
 // int main() {
-//   // -285723589948267
-//   s21_decimal dec1 = {{0x3515336b, 0x103dd, 0x0, 0x80000000}};
-//   // 2.3274245695749650513
-//   s21_decimal dec2 = {{0xe6527851, 0x42febb25, 0x1, 0x130000}};
-//   // -285723589948264.67257543042503
-//   s21_decimal dec_check = {{0xea6025c7, 0xc2e68579, 0x5c52805c, 0x800e0000}};
+//     s21_decimal dec1 = {{0xfe6d9ab0, 0x11, 0x0, 0x80000000}};
+//     s21_decimal dec2 = {{0xccfae07f, 0xf95b851a, 0x24681264, 0x80180000}};
+//     s21_decimal dec_check = {{0xdd3539f4, 0xf1893fda, 0xdda0e74b, 0x160000}};
 
 //     s21_decimal res = {0};
 //     s21_decimal dec3 = {0};
@@ -248,7 +250,7 @@ int mantiss_round(s21_decimal *result, s21_decimal remainder, s21_decimal value_
 //     // dec2.bits[0] = 0b11111111111111111111111111111110;
 //     printf("%s\n", dectostr(dec1));
 //     printf("%s\n", dectostr(dec2));
-//     printf("err = %d\n", s21_add(dec1, dec2, &res));
+//     printf("err = %d\n", s21_div(dec1, dec2, &res));
 //     printf("%s\n", dectostr(res));
 
 //     printf("%s\n", dectostr(dec_check));

@@ -23,9 +23,10 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     exp_2--;
   }
   set_sign(&value_2, sign_2);
-  if (mantiss_compare(value_1, value_2) == -1 ||
-      (mantiss_compare(value_1, value_2) == 0 && sign_1))
+  if (mantiss_compare(value_1, value_2) == -1) {
     decimal_switch(&value_1, &value_2);
+    sign_1 = get_sign(value_1);
+  }
   if (get_sign(value_1) == get_sign(value_2)) {
     overflow = mantiss_sum(value_1, value_2, result);
     while (exp_1 && overflow) {
@@ -39,7 +40,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     mantiss_sub(value_1, value_2, result);
   }
   set_exp(result, exp_1);
-  set_sign(result, get_sign(value_1));
+  set_sign(result, sign_1);
   if (overflow && get_sign(*result)) overflow++;
   return overflow;
 }
@@ -55,6 +56,7 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL)
     return 1;
+  if (mantiss_compare(value_1, value_2) == 1) decimal_switch(&value_1, &value_2);
   clear_decimal(result);
   int overflow = 0;
   int new_sign = get_sign(value_1) ^ get_sign(value_2);
