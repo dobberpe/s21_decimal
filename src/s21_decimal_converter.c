@@ -96,8 +96,7 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     if (s21_is_not_equal(int_part, zero)) {
         pos = 95 - mantiss_prev_nulls(int_part);
         set_bit(&int_part, pos, 0);
-        f.bits = (pos + 127) << 23;
-        f.bits |= get_sign(int_part) ? (1 << 31) : 0;
+        f.bits = (pos + 127) << 23;                             // выставляю экспоненту
         if ((pos % 32 >= 23 && pos % 32 <= 31) || pos < 23) {
             f.bits |= pos < 23 ? int_part.bits[pos / 32] << (23 - pos) : int_part.bits[pos / 32] >> (pos - 23);
         } else {
@@ -105,29 +104,45 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
             f.bits |= int_part.bits[pos / 32 - 1] >> (9 + pos % 32); // 32 - 23 + pos % 32
         }
     }
-    if (pos < 23 && s21_is_not_equal(frac_part, zero)) {
-        s21_decimal two = {2, 0, 0, 0};
-        if (pos == -1) {
-            pos = 24;
+    if (pos < 23 && s21_is_not_equal(frac_part, zero)) {        // если pos < 23 => дробная часть может влезть, если она существует
+        s21_decimal eights_of_two = {256, 0, 0, 0};
+        unsigned octuplets = 0;
+        if (pos == -1) {                                        // pos = -1 когда целая 0 => мнимый бит дробный
+            pos = 4;                                            // мы можем получить 23 бита двоичного представления +1 на префиксный декримент
             bool sign_bits = false;
+            int e = -1;
             while (pos) {
-                s21_mul(frac_part, two, &frac_part);
-                s21_truncate(frac_part, &int_part);
-                s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= pos != 24 ? (frac_part.bits[0] << (pos - 1)) : 0;
-                if ((sign_bits = frac_part.bits[0] ? true : sign_bits)) --pos;
+                s21_mul(frac_part, eights_of_two, &frac_part);  // умножаем дробь на 16 пока не получим первый значащий квартоль
+                s21_truncate(frac_part, &int_part);             // записываем целую часть после умножения
+                s21_sub(frac_part, int_part, &frac_part);       // записываем хвост после умножения
+                if (!sign_bits && int_part.bits[0]) sign_bits = true;
+                if (sign_bits) octuplets |= int_part.bits[0] << (--pos * 8);
+                else e -= 8;
             }
-        } else {
-            pos = 23 - pos;
-            while (pos) {
-                s21_mul(frac_part, two, &frac_part);
-                s21_truncate(frac_part, &int_part);
-                s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= frac_part.bits[0] /*<< pos*/;
+            unsigned mask = (unsigned)1 << 31;
+            pos = 31;
+            while (!(mask & octuplets)) {
                 --pos;
+                mask >>= 1;
+            }                                                   // первый значащий на позиции 24-31
+            f.bits |= (unsigned)(e + pos + 96) << 23;
+            octuplets &= ~((unsigned)1 << pos);
+            f.bits |= octuplets >> (pos - 23);
+        } else {                                                // добиваю дробные биты при наличии целых
+            int block = 4;
+            while (block) {
+                s21_mul(frac_part, eights_of_two, &frac_part);
+                s21_truncate(frac_part, &int_part);
+                s21_sub(frac_part, int_part, &frac_part);
+                octuplets |= int_part.bits[0] << (--block * 8);
             }
+            f.bits |= octuplets >> (9 + pos);
         }
     }
+
+    f.bits |= get_sign(src) ? (1 << 31) : 0;                    // выставляю знак
+    *dst = f.full;
+    
     return res;
 }
 
