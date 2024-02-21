@@ -82,7 +82,7 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) { // нужен truncate
     return res;
 }
 
-int s21_from_decimal_to_float(s21_decimal src, float *dst) {
+int s21_from_decimal_to_float(s21_decimal src, float *dst) {    // ОТРИЦАТЕЛЬНЫЙ ЗНАК!!!!!!!!!!!!!!!!
     int res = 0;
     f_bits f;
     f.bits = 0;
@@ -96,7 +96,7 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     if (s21_is_not_equal(int_part, zero)) {
         pos = 95 - mantiss_prev_nulls(int_part);
         set_bit(&int_part, pos, 0);
-        f.bits = (pos + 127) << 23;
+        f.bits = (pos + 127) << 23;                         // выставляю экспоненту
         f.bits |= get_sign(int_part) ? (1 << 31) : 0;
         if ((pos % 32 >= 23 && pos % 32 <= 31) || pos < 23) {
             f.bits |= pos < 23 ? int_part.bits[pos / 32] << (23 - pos) : int_part.bits[pos / 32] >> (pos - 23);
@@ -105,30 +105,34 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
             f.bits |= int_part.bits[pos / 32 - 1] >> (9 + pos % 32); // 32 - 23 + pos % 32
         }
     }
-    if (pos < 23 && s21_is_not_equal(frac_part, zero)) {
-        s21_decimal two = {2, 0, 0, 0};
-        if (pos == -1) {
-            pos = 24;
+    if (pos < 23 && s21_is_not_equal(frac_part, zero)) {    // если pos < 23 => дробная часть может влезть, если она существует
+        s21_decimal octuplet = {256, 0, 0, 0};              // основание системы счисления при переводе дробной части
+        if (pos == -1) {                                    // pos = -1 когда целая 0 => мнимый бит дробный
+            pos = 4;                                        // нам нужно 4 блока восьмибитных октолей
+            unsigned tuplets = 0;
             bool sign_bits = false;
-            int e;
+            int e = -1;
             while (pos) {
-                printf("%s * %d = ", dectostr(frac_part), 2);
-                s21_mul(frac_part, two, &frac_part);
-                printf("%s\n", dectostr(frac_part));
-                s21_truncate(frac_part, &int_part);
-                s21_sub(frac_part, int_part, &frac_part);
-                printf("int: %s\nfrc: %s\n\n", dectostr(int_part), dectostr(frac_part));
-                f.bits |= pos != 24 ? (int_part.bits[0] << (pos - 1)) : 0;
-                if (!sign_bits && int_part.bits[0]) {
-                    sign_bits = true;
-                    e = pos - 1;
-                }
-                if (sign_bits) --pos;
+                s21_mul(frac_part, octuplet, &frac_part);   // умножаем дробь на 256 пока не получим первый значащий октоль
+                s21_truncate(frac_part, &int_part);         // записываем целую часть после умножения
+                s21_sub(frac_part, int_part, &frac_part);   // записываем хвост после умножения
+                if (!sign_bits && int_part.bits[0]) sign_bits = true;
+                if (sign_bits) tuplets |= int_part.bits[0] << (--pos * 8);
+                else e -= 8;
             }
+            unsigned mask = (unsigned)1 << 31;
+            pos = 31;
+            while (!(mask & tuplets)) {
+                --pos;
+                mask >>= 1;
+            }                                               // первый значащий на позиции 24-31
+            f.bits |= (unsigned)(e + pos + 96) << 23;
+            tuplets &= ~((unsigned)1 << pos);
+            f.bits |= tuplets >> (pos - 23);
         } else {
             pos = 23 - pos;
             while (pos) {
-                s21_mul(frac_part, two, &frac_part);
+                s21_mul(frac_part, octuplet, &frac_part);
                 s21_truncate(frac_part, &int_part);
                 s21_sub(frac_part, int_part, &frac_part);
                 f.bits |= frac_part.bits[0] /*<< pos*/;
@@ -136,6 +140,8 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
             }
         }
     }
+    *dst = f.full;
+    
     return res;
 }
 
@@ -162,4 +168,4 @@ int main() {
         printf("%s\n%.28f\n\n", dectostr(tmp), f);
     }
     return 0;
-};
+}
