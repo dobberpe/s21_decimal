@@ -148,10 +148,14 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
 
 // int main() {
 //     // f_bits f = {powf(2, 24) - 1};
-//     s21_decimal d;
-//     float a = 2.123;
-//     s21_from_float_to_decimal(a, &d);
+//     // 2101970847525601134.671422
+//     s21_decimal d = {{0x91b6763e, 0x116671af, 0x1bd1c, 0x60000}};
+//     float a;
+//     float b = 2101970847525601134.671422;
+//     s21_from_decimal_to_float(d, &a);
 //     printf("%s\n", dectostr(d));
+//     printf("%f\n", a);
+//     printf("%f\n", b);
 //     // for (int i = -94; i < 97; ++i) {
 //     //     printf("i: %d\n", i);
 //     //     f.bits = f.bits & ~(0xff << 23);

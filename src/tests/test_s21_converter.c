@@ -83,7 +83,38 @@ START_TEST(s21_int_to_decimal_zero) {
 END_TEST
 
 
+START_TEST(s21_dec_to_float_pos) {
+    // 3.862393
+    s21_decimal dec_1 = {{0x3aef79, 0x0, 0x0, 0x60000}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = 3.862393;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
 
+
+START_TEST(s21_dec_to_float_neg) {
+    // -0.565402
+    s21_decimal dec_1 = {{0x8a09a, 0x0, 0x0, 0x80060000}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = -0.565402;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
+
+START_TEST(s21_dec_to_float_zero) {
+    s21_decimal dec_1 = {{0x0, 0x0, 0x0, 0x0}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = 0.0;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
 
 
 Suite *s21_converter_cases(void) {
@@ -96,7 +127,9 @@ Suite *s21_converter_cases(void) {
   tcase_add_test(tc, s21_int_to_decimal_pos);
   tcase_add_test(tc, s21_int_to_decimal_neg);
   tcase_add_test(tc, s21_int_to_decimal_zero);
-  
+  tcase_add_test(tc, s21_dec_to_float_pos);
+  tcase_add_test(tc, s21_dec_to_float_neg);
+  tcase_add_test(tc, s21_dec_to_float_zero);
     suite_add_tcase(c, tc);
   return c;
 }
