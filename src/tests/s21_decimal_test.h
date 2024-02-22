@@ -15,5 +15,7 @@ Suite *s21_mul_cases(void);
 Suite *s21_div_cases(void);
 Suite *s21_compare_cases(void);
 Suite *s21_other_cases(void);
+Suite *s21_dectostr_cases(void);
+Suite *s21_converter_cases(void);
 
 #endif

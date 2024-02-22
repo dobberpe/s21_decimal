@@ -147,18 +147,21 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
 }
 
 // int main() {
-//     f_bits f = {powf(2, 24) - 1};
+//     // f_bits f = {powf(2, 24) - 1};
 //     s21_decimal d;
-//     for (int i = -94; i < 97; ++i) {
-//         printf("i: %d\n", i);
-//         f.bits = f.bits & ~(0xff << 23);
-//         f.bits |= (unsigned)(i + 127) << 23;
-//         s21_from_float_to_decimal(f.full, &d);
-//         printf("%s\n", dectostr(d));
-//         printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
-//     }
-//     // float x = 1e-23;
+//     float a = 2.123;
+//     s21_from_float_to_decimal(a, &d);
+//     printf("%s\n", dectostr(d));
+//     // for (int i = -94; i < 97; ++i) {
+//     //     printf("i: %d\n", i);
+//     //     f.bits = f.bits & ~(0xff << 23);
+//     //     f.bits |= (unsigned)(i + 127) << 23;
+//     //     s21_from_float_to_decimal(f.full, &d);
+//     //     printf("%s\n", dectostr(d));
+//     //     printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
+//     // }
+//     // // float x = 1e-23;
 //     // s21_from_float_to_decimal(x, &d);
 //     // printf("%s\n", dectostr(d));
 //     // return 0;
-// };
+// }
