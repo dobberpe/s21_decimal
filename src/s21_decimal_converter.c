@@ -25,13 +25,13 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
             unsigned int_bits = (f.bits << 9) >> 9;
             int_bits = (int_bits << (e % (32 * (e / 32) + 23))) | ((unsigned)1 << (e % 32));
             dst->bits[e / 32] = int_bits;
-        } else if (e > 31) { // нужно проверить пограничные случаи
+        } else if (e > 31) {                                    // нужно проверить пограничные случаи
             unsigned int_bits = (f.bits << 9) >> 9;
             int_bits = (int_bits >> (24 - e % (e > 63 ? 63 : 31))) | ((unsigned)1 << (e % (e > 63 ? 63 : 31) - 1));
             dst->bits[e / 32] = int_bits;
             int_bits = f.bits << (9 + e % (e > 63 ? 63 : 31) - 1);
             dst->bits[e / 32 - 1] = int_bits;
-        } else { // пока для экспоненты в пределах одного инта
+        } else {
             s21_decimal int_part = {0};
             s21_decimal frac_part = {0};
             s21_decimal two = {{2, 0, 0, 0}};
@@ -51,7 +51,7 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
             e = e >= 0 ? -1 : e;
             while (mask && e > -94 && !res) {
                 if (mask & f.bits) {
-                    if (!(res = s21_pow(two, e, &tmp))) { // декомпозировать вложенность!!!
+                    if (!(res = s21_pow(two, e, &tmp))) {       // декомпозировать вложенность!!!
                         res = s21_add(frac_part, tmp, &frac_part);
                     }
                 }
@@ -64,10 +64,27 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
         }
     }
 
+    round_to_7_significant(dst);
+
     return res;
 }
 
-int s21_from_decimal_to_int(s21_decimal src, int *dst) { // нужен truncate
+void round_to_7_significant(s21_decimal *dst) {
+    int exp = get_exp(*dst);
+    set_exp(dst, 0);
+    s21_decimal max = {{10000000, 0, 0, 0}};
+    while (s21_is_greater_or_equal(*dst, max)) {
+        *dst = mantiss_dev_by_10_with_rownd(*dst);
+        --exp;
+    }
+    while (exp < 0) {
+        mantiss_mult_by_10(*dst, dst);
+        ++exp;
+    }
+    set_exp(dst, exp);
+}
+
+int s21_from_decimal_to_int(s21_decimal src, int *dst) {
     int res = 0;
     s21_decimal int_part;
     s21_truncate(src, &int_part);
