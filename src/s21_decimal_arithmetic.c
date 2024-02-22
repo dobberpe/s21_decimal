@@ -106,10 +106,10 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     return 1;
   if (zero_check(value_2)) return 3;
   clear_decimal(result);
-  int overflow = 0, cont = 1;
+  int overflow = 0;
   int new_sign = get_sign(value_1) ^ get_sign(value_2);
   if (!zero_check(value_1)) {
-    int new_exp = get_exp(value_1) - get_exp(value_2);
+    int new_exp = get_exp(value_1) - get_exp(value_2), cont = 1;
     s21_decimal remainder = {{1, 0, 0, 0}};
     while (new_exp <= 28 && !overflow && !zero_check(remainder) && cont) {
       s21_decimal tmp = {0};

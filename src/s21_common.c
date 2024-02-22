@@ -77,12 +77,6 @@ int mantiss_shift(s21_decimal dec, s21_decimal *result, int shift) {
     return overflow;
 }
 
-s21_decimal mantiss_shift_right(s21_decimal dec, int shift) {
-    for (int i = 0; i <= 95 - shift; i++) set_bit(&dec, i, get_bit(dec, i + shift));
-    for (int i = 95 - shift + 1; i <= 95; i++) set_bit(&dec, i, 0);
-    return dec;
-}
-
 // Умножение мантисс
 int mantiss_multiply(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     clear_decimal(result);
@@ -149,14 +143,14 @@ int mantiss_mult_by_10(s21_decimal dec, s21_decimal *result) {
 
 // Установить экспоненту: exp = 0-28
 void set_exp(s21_decimal *dec, int exp) {
-    int sign = dec->bits[3] & (1 << 31);
+    int sign = dec->bits[3] & ((unsigned)1 << 31);
     dec->bits[3] = (exp << 16);
     dec->bits[3] |= sign;
 }
 
 // Считать экспоненту
 int get_exp(s21_decimal dec) {
-    dec.bits[3] &= ~(1 << 31);
+    dec.bits[3] &= ~((unsigned)1 << 31);
     return dec.bits[3] >> 16;
 }
 
@@ -168,9 +162,9 @@ int get_sign(s21_decimal dec) {
 // Установить знак числа 0 - положительное, 1 - отрицательное
 void set_sign(s21_decimal *dec, int sign) {
     if (sign)
-        dec->bits[3] |= (1 << 31);
+        dec->bits[3] |= ((unsigned)1 << 31);
     else
-        dec->bits[3] &= ~(1 << 31);
+        dec->bits[3] &= ~((unsigned)1 << 31);
 }
 
 void decimal_switch(s21_decimal *value_1, s21_decimal *value_2) {
