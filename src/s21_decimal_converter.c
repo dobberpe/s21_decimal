@@ -25,13 +25,13 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
             unsigned int_bits = (f.bits << 9) >> 9;
             int_bits = (int_bits << (e % (32 * (e / 32) + 23))) | ((unsigned)1 << (e % 32));
             dst->bits[e / 32] = int_bits;
-        } else if (e > 31) { // нужно проверить пограничные случаи
+        } else if (e > 31) {                                    // нужно проверить пограничные случаи
             unsigned int_bits = (f.bits << 9) >> 9;
             int_bits = (int_bits >> (24 - e % (e > 63 ? 63 : 31))) | ((unsigned)1 << (e % (e > 63 ? 63 : 31) - 1));
             dst->bits[e / 32] = int_bits;
             int_bits = f.bits << (9 + e % (e > 63 ? 63 : 31) - 1);
             dst->bits[e / 32 - 1] = int_bits;
-        } else { // пока для экспоненты в пределах одного инта
+        } else {
             s21_decimal int_part = {0};
             s21_decimal frac_part = {0};
             s21_decimal two = {{2, 0, 0, 0}};
@@ -51,7 +51,7 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
             e = e >= 0 ? -1 : e;
             while (mask && e > -94 && !res) {
                 if (mask & f.bits) {
-                    if (!(res = s21_pow(two, e, &tmp))) { // декомпозировать вложенность!!!
+                    if (!(res = s21_pow(two, e, &tmp))) {       // декомпозировать вложенность!!!
                         res = s21_add(frac_part, tmp, &frac_part);
                     }
                 }
@@ -64,10 +64,27 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
         }
     }
 
+    round_to_7_significant(dst);
+
     return res;
 }
 
-int s21_from_decimal_to_int(s21_decimal src, int *dst) { // нужен truncate
+void round_to_7_significant(s21_decimal *dst) {
+    int exp = get_exp(*dst);
+    set_exp(dst, 0);
+    s21_decimal max = {{10000000, 0, 0, 0}};
+    while (s21_is_greater_or_equal(*dst, max)) {
+        *dst = mantiss_dev_by_10_with_rownd(*dst);
+        --exp;
+    }
+    while (exp < 0) {
+        mantiss_mult_by_10(*dst, dst);
+        ++exp;
+    }
+    set_exp(dst, exp);
+}
+
+int s21_from_decimal_to_int(s21_decimal src, int *dst) {
     int res = 0;
     s21_decimal int_part;
     s21_truncate(src, &int_part);
@@ -146,26 +163,37 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     return res;
 }
 
-// int main() {
-//     // f_bits f = {powf(2, 24) - 1};
-//     // 2101970847525601134.671422
-//     s21_decimal d = {{0x91b6763e, 0x116671af, 0x1bd1c, 0x60000}};
-//     float a;
-//     float b = 2101970847525601134.671422;
-//     s21_from_decimal_to_float(d, &a);
-//     printf("%s\n", dectostr(d));
-//     printf("%f\n", a);
-//     printf("%f\n", b);
-//     // for (int i = -94; i < 97; ++i) {
-//     //     printf("i: %d\n", i);
-//     //     f.bits = f.bits & ~(0xff << 23);
-//     //     f.bits |= (unsigned)(i + 127) << 23;
-//     //     s21_from_float_to_decimal(f.full, &d);
-//     //     printf("%s\n", dectostr(d));
-//     //     printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
-//     // }
-//     // // float x = 1e-23;
-//     // s21_from_float_to_decimal(x, &d);
-//     // printf("%s\n", dectostr(d));
-//     // return 0;
-// }
+int main() {
+    f_bits f = {powf(2, 24) - 1};
+    s21_decimal d;
+    for (int i = -94; i < 97; ++i) {
+        printf("i: %d\n", i);
+        f.bits = f.bits & ~(0xff << 23);
+        f.bits |= (unsigned)(i + 127) << 23;
+        s21_from_float_to_decimal(f.full, &d);
+        printf("%s\n", dectostr(d));
+        printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
+    }
+//    float f = powf(2, -93);
+//    s21_decimal d;
+//    s21_decimal ten = {{10, 0, 0, 0}};
+//    s21_from_float_to_decimal(f, &d);
+//    printf("%s\n", dectostr(d));
+    // for (int i = 0; i < 28; ++i) {
+    //     s21_decimal tmp;
+    //     s21_pow(ten, i, &tmp);
+    //     s21_mul(d, tmp, &tmp);
+    //     s21_from_decimal_to_float(tmp, &f);
+    //     printf("%s\n%.28f\n\n", dectostr(tmp), f);
+    // }
+//    f = -3.14;
+//    s21_from_float_to_decimal(f, &d);
+//    for (int i = 1; i < 10; ++i) {
+//        s21_decimal tmp;
+//        s21_from_int_to_decimal(i, &tmp);
+//        s21_mul(d, tmp, &tmp);
+//        s21_from_decimal_to_float(tmp, &f);
+//        printf("%s\n%.28f\n\n", dectostr(tmp), f);
+//    }
+    return 0;
+}
