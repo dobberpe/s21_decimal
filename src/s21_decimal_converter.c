@@ -164,20 +164,20 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
 }
 
 int main() {
-//    f_bits f = {powf(2, 24) - 1};
-//    s21_decimal d;
-//    for (int i = -94; i < 97; ++i) {
-//        printf("i: %d\n", i);
-//        f.bits = f.bits & ~(0xff << 23);
-//        f.bits |= (unsigned)(i + 127) << 23;
-//        s21_from_float_to_decimal(f.full, &d);
-//        printf("%s\n", dectostr(d));
-//        printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
-//    }
-    float f = powf(2, -93);
+    f_bits f = {powf(2, 24) - 1};
     s21_decimal d;
-    s21_decimal ten = {{10, 0, 0, 0}};
-    s21_from_float_to_decimal(f, &d);
+    for (int i = -94; i < 97; ++i) {
+        printf("i: %d\n", i);
+        f.bits = f.bits & ~(0xff << 23);
+        f.bits |= (unsigned)(i + 127) << 23;
+        s21_from_float_to_decimal(f.full, &d);
+        printf("%s\n", dectostr(d));
+        printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
+    }
+//    float f = powf(2, -93);
+//    s21_decimal d;
+//    s21_decimal ten = {{10, 0, 0, 0}};
+//    s21_from_float_to_decimal(f, &d);
 //    printf("%s\n", dectostr(d));
     // for (int i = 0; i < 28; ++i) {
     //     s21_decimal tmp;
@@ -186,14 +186,14 @@ int main() {
     //     s21_from_decimal_to_float(tmp, &f);
     //     printf("%s\n%.28f\n\n", dectostr(tmp), f);
     // }
-    f = -3.14;
-    s21_from_float_to_decimal(f, &d);
-    for (int i = 1; i < 10; ++i) {
-        s21_decimal tmp;
-        s21_from_int_to_decimal(i, &tmp);
-        s21_mul(d, tmp, &tmp);
-        s21_from_decimal_to_float(tmp, &f);
-        printf("%s\n%.28f\n\n", dectostr(tmp), f);
-    }
+//    f = -3.14;
+//    s21_from_float_to_decimal(f, &d);
+//    for (int i = 1; i < 10; ++i) {
+//        s21_decimal tmp;
+//        s21_from_int_to_decimal(i, &tmp);
+//        s21_mul(d, tmp, &tmp);
+//        s21_from_decimal_to_float(tmp, &f);
+//        printf("%s\n%.28f\n\n", dectostr(tmp), f);
+//    }
     return 0;
 }
