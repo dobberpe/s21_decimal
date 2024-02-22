@@ -71,10 +71,12 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
 
 void round_to_7_significant(s21_decimal *dst) {
     int exp = get_exp(*dst);
+    int sign = get_sign(*dst);
+    set_sign(dst, 0);
     set_exp(dst, 0);
     s21_decimal max = {{10000000, 0, 0, 0}};
     while (s21_is_greater_or_equal(*dst, max)) {
-        *dst = mantiss_dev_by_10_with_rownd(*dst);
+        *dst = mantiss_dev_by_10_with_round(*dst);
         --exp;
     }
     while (exp < 0) {
@@ -82,6 +84,7 @@ void round_to_7_significant(s21_decimal *dst) {
         ++exp;
     }
     set_exp(dst, exp);
+    set_sign(dst, sign);
 }
 
 int s21_from_decimal_to_int(s21_decimal src, int *dst) {
@@ -163,37 +166,43 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     return res;
 }
 
-int main() {
-    f_bits f = {powf(2, 24) - 1};
-    s21_decimal d;
-    for (int i = -94; i < 97; ++i) {
-        printf("i: %d\n", i);
-        f.bits = f.bits & ~(0xff << 23);
-        f.bits |= (unsigned)(i + 127) << 23;
-        s21_from_float_to_decimal(f.full, &d);
-        printf("%s\n", dectostr(d));
-        printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
-    }
-//    float f = powf(2, -93);
-//    s21_decimal d;
-//    s21_decimal ten = {{10, 0, 0, 0}};
-//    s21_from_float_to_decimal(f, &d);
-//    printf("%s\n", dectostr(d));
-    // for (int i = 0; i < 28; ++i) {
-    //     s21_decimal tmp;
-    //     s21_pow(ten, i, &tmp);
-    //     s21_mul(d, tmp, &tmp);
-    //     s21_from_decimal_to_float(tmp, &f);
-    //     printf("%s\n%.28f\n\n", dectostr(tmp), f);
-    // }
-//    f = -3.14;
-//    s21_from_float_to_decimal(f, &d);
-//    for (int i = 1; i < 10; ++i) {
-//        s21_decimal tmp;
-//        s21_from_int_to_decimal(i, &tmp);
-//        s21_mul(d, tmp, &tmp);
-//        s21_from_decimal_to_float(tmp, &f);
-//        printf("%s\n%.28f\n\n", dectostr(tmp), f);
-//    }
-    return 0;
-}
+// int main() {
+//     // -3.862393
+//     s21_decimal dec_check = {{0x3aef79, 0x0, 0x0, 0x80060000}}, result;
+//     float src = -3.862393;
+//     int return_value = s21_from_float_to_decimal(src, &result);
+//     printf("%s\n", dectostr(result));
+//     printf("%s\n", dectostr(dec_check));
+//     // f_bits f = {powf(2, 24) - 1};
+//     // s21_decimal d;
+//     // for (int i = -94; i < 97; ++i) {
+//     //     printf("i: %d\n", i);
+//     //     f.bits = f.bits & ~(0xff << 23);
+//     //     f.bits |= (unsigned)(i + 127) << 23;
+//     //     s21_from_float_to_decimal(f.full, &d);
+//     //     printf("%s\n", dectostr(d));
+//     //     printf("%.*f\n\n", i < 0 ? 28 : 23 - i > 0 ? 23 - i : 0, f.full);
+//     // }
+// //    float f = powf(2, -93);
+// //    s21_decimal d;
+// //    s21_decimal ten = {{10, 0, 0, 0}};
+// //    s21_from_float_to_decimal(f, &d);
+// //    printf("%s\n", dectostr(d));
+//     // for (int i = 0; i < 28; ++i) {
+//     //     s21_decimal tmp;
+//     //     s21_pow(ten, i, &tmp);
+//     //     s21_mul(d, tmp, &tmp);
+//     //     s21_from_decimal_to_float(tmp, &f);
+//     //     printf("%s\n%.28f\n\n", dectostr(tmp), f);
+//     // }
+// //    f = -3.14;
+// //    s21_from_float_to_decimal(f, &d);
+// //    for (int i = 1; i < 10; ++i) {
+// //        s21_decimal tmp;
+// //        s21_from_int_to_decimal(i, &tmp);
+// //        s21_mul(d, tmp, &tmp);
+// //        s21_from_decimal_to_float(tmp, &f);
+// //        printf("%s\n%.28f\n\n", dectostr(tmp), f);
+// //    }
+//     return 0;
+// }

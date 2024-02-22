@@ -86,14 +86,14 @@ END_TEST
 START_TEST(s21_dec_to_float_pos) {
     // 3.862393
     s21_decimal dec_1 = {{0x3aef79, 0x0, 0x0, 0x60000}};
+    float eps = 0.0000001;
     float res;
     int errno = s21_from_decimal_to_float(dec_1, &res);
     float check = 3.862393;
-    ck_assert_float_eq(res, check);
+    ck_assert_float_lt(fabsf(check - res), eps);
     ck_assert_int_eq(errno, 0);
 }
 END_TEST
-
 
 START_TEST(s21_dec_to_float_neg) {
     // -0.565402
@@ -116,6 +116,46 @@ START_TEST(s21_dec_to_float_zero) {
 }
 END_TEST
 
+START_TEST(s21_float_to_decimal_pos) {
+    // 21758100.1210
+    s21_decimal dec_check = {{0x14c0094, 0x0, 0x0, 0x0}}, result;
+    float src = 21758100.1210;
+    int return_value = s21_from_float_to_decimal(src, &result);
+    ck_assert_int_eq(return_value, 0);
+    ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
+    ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
+    ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
+    ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
+}
+END_TEST
+
+
+START_TEST(s21_float_to_decimal_neg) {
+    // -3.862393
+    s21_decimal dec_check = {{0x3aef79, 0x0, 0x0, 0x80060000}}, result;
+    float src = -3.862393;
+    int return_value = s21_from_float_to_decimal(src, &result);
+    ck_assert_int_eq(return_value, 0);
+    ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
+    ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
+    ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
+    ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
+}
+END_TEST
+
+START_TEST(s21_float_to_decimal_zero) {
+    // 0
+    s21_decimal dec_check = {{0x0, 0x0, 0x0, 0x0}}, result;
+    float src = 0.0;
+    int return_value = s21_from_float_to_decimal(src, &result);
+    ck_assert_int_eq(return_value, 0);
+    ck_assert_uint_eq(dec_check.bits[0], result.bits[0]);
+    ck_assert_uint_eq(dec_check.bits[1], result.bits[1]);
+    ck_assert_uint_eq(dec_check.bits[2], result.bits[2]);
+    ck_assert_uint_eq(dec_check.bits[3], result.bits[3]);
+}
+END_TEST
+
 
 Suite *s21_converter_cases(void) {
   Suite *c = suite_create("s21_converter_cases");
@@ -130,6 +170,9 @@ Suite *s21_converter_cases(void) {
   tcase_add_test(tc, s21_dec_to_float_pos);
   tcase_add_test(tc, s21_dec_to_float_neg);
   tcase_add_test(tc, s21_dec_to_float_zero);
+  tcase_add_test(tc, s21_float_to_decimal_pos);
+  tcase_add_test(tc, s21_float_to_decimal_neg);
+  tcase_add_test(tc, s21_float_to_decimal_zero);
     suite_add_tcase(c, tc);
   return c;
 }
