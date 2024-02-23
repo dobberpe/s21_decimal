@@ -58,10 +58,10 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // перевод
                 mask >>= 1;
                 --e;
             }
-            if (!res) {
-                if (!(res = s21_add(int_part, frac_part, dst)) && f.full < 0) set_sign(dst, 1);
-            }
+            if (!res) res = s21_add(int_part, frac_part, dst);
         }
+        if (!res && f.full < 0) set_sign(dst, 1);
+        else if (res) for (int i = 0; i < 4; ++i) dst->bits[i] = 0;
     }
 
     round_to_7_significant(dst);
@@ -112,6 +112,7 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     s21_sub(src, int_part, &frac_part);
 
     s21_decimal zero = {0, 0, 0, 0};
+    s21_decimal two = {2, 0, 0, 0};
     int pos = -1;
     if (s21_is_not_equal(int_part, zero)) {
         pos = 95 - mantiss_prev_nulls(int_part);
@@ -122,6 +123,21 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
         } else {
             f.bits |= int_part.bits[pos / 32] << (23 - pos % 32);
             f.bits |= int_part.bits[pos / 32 - 1] >> (9 + pos % 32); // 32 - 23 + pos % 32
+        }
+        if (pos > 24) {                                         // округление
+            f.bits |= get_bit(src, pos - 24) && get_bit(src, pos - 25) ? 1 : 0;
+        } else if (s21_is_not_equal(frac_part, zero)) {
+            printf("round\n");
+            s21_mul(frac_part, two, &frac_part);
+            s21_truncate(frac_part, &int_part);
+            s21_sub(frac_part, int_part, &frac_part);
+            if (pos == 24) f.bits |= get_bit(src, pos - 24) && int_part.bits[0] ? 1 : 0;
+            else if (int_part.bits[0]) {
+                s21_mul(frac_part, two, &frac_part);
+                s21_truncate(frac_part, &int_part);
+                s21_sub(frac_part, int_part, &frac_part);
+                f.bits |= int_part.bits[0] ? 1 : 0;
+            }
         }
     }
     if (pos < 23 && s21_is_not_equal(frac_part, zero)) {        // если pos < 23 => дробная часть может влезть, если она существует
@@ -146,9 +162,18 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
                 mask >>= 1;
             }                                                   // первый значащий на позиции 24-31
             f.bits |= (unsigned)(e + pos + 96) << 23;
-            octuplets &= ~((unsigned)1 << pos);
+            octuplets &= ~((unsigned)1 << pos);                 // зануляем мнимый бит
             f.bits |= octuplets >> (pos - 23);
+            // округление
+            if (pos == 24) {                                    // получаем второй младший бит, если его нет
+                s21_mul(frac_part, two, &frac_part);
+                s21_truncate(frac_part, &int_part);
+                s21_sub(frac_part, int_part, &frac_part);
+                f.bits |= (mask & octuplets) && int_part.bits[0] ? 1 : 0;
+            }
+            else f.bits |= (((unsigned)1 << (pos - 24)) & octuplets) && (((unsigned)1 << (pos - 25)) & octuplets) ? 1 : 0;
         } else {                                                // добиваю дробные биты при наличии целых
+            printf("\nrounding frac with int\n\n");
             int block = 4;
             while (block) {
                 s21_mul(frac_part, eights_of_two, &frac_part);
@@ -157,6 +182,15 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
                 octuplets |= int_part.bits[0] << (--block * 8);
             }
             f.bits |= octuplets >> (9 + pos);
+            unsigned mask = (unsigned)1 << 31;
+            printf("OCT\n");
+            while (mask) {
+                printf(mask & octuplets ? "1" : "0");
+                mask >>= 1;
+            }
+            printf("\n");            
+            // unsigned mask = (unsigned)1 << (22 - pos);          // округление
+            // f.bits |= mask & octuplets ? 1 : 0;
         }
     }
 
