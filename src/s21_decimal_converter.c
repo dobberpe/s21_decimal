@@ -124,20 +124,13 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
             f.bits |= int_part.bits[pos / 32] << (23 - pos % 32);
             f.bits |= int_part.bits[pos / 32 - 1] >> (9 + pos % 32); // 32 - 23 + pos % 32
         }
-        if (pos > 24) {                                         // округление
-            f.bits |= get_bit(src, pos - 24) && get_bit(src, pos - 25) ? 1 : 0;
-        } else if (s21_is_not_equal(frac_part, zero)) {
-            printf("round\n");
-            s21_mul(frac_part, two, &frac_part);
-            s21_truncate(frac_part, &int_part);
-            s21_sub(frac_part, int_part, &frac_part);
-            if (pos == 24) f.bits |= get_bit(src, pos - 24) && int_part.bits[0] ? 1 : 0;
-            else if (int_part.bits[0]) {
-                s21_mul(frac_part, two, &frac_part);
-                s21_truncate(frac_part, &int_part);
-                s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= int_part.bits[0] ? 1 : 0;
-            }
+        if (pos > 24 && get_bit(int_part, pos - 24)) {                                         // округление
+            for (int i = 1; i < 25; ++i) set_bit(&int_part, pos - i, 0);
+            f.bits |= s21_is_not_equal(int_part, zero) || s21_is_not_equal(frac_part, zero) ? 1 : 0;
+        } else if (pos > 22 && s21_is_not_equal(frac_part, zero)) {
+            s21_decimal half = {5, 0, 0, 0x10000};
+            set_sign(&frac_part, 0);
+            f.bits |= (pos == 24 && get_bit(int_part, pos - 24)) || (pos == 23 && s21_is_greater(frac_part, half)) ? 1 : 0;
         }
     }
     if (pos < 23 && s21_is_not_equal(frac_part, zero)) {        // если pos < 23 => дробная часть может влезть, если она существует
@@ -164,16 +157,14 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
             f.bits |= (unsigned)(e + pos + 96) << 23;
             octuplets &= ~((unsigned)1 << pos);                 // зануляем мнимый бит
             f.bits |= octuplets >> (pos - 23);
-            // округление
-            if (pos == 24) {                                    // получаем второй младший бит, если его нет
-                s21_mul(frac_part, two, &frac_part);
-                s21_truncate(frac_part, &int_part);
-                s21_sub(frac_part, int_part, &frac_part);
-                f.bits |= (mask & octuplets) && int_part.bits[0] ? 1 : 0;
+            mask = (unsigned)1 << (pos - 24);                   // округление
+            if (pos == 24) f.bits |= (mask & octuplets) && s21_is_not_equal(frac_part, zero) ? 1 : 0;
+            else {
+                bool first_extra_bit = mask & octuplets;
+                octuplets <<= (55 - pos); // 24 -> 31   25 -> 30   31 -> 24
+                f.bits |= first_extra_bit && (octuplets || s21_is_not_equal(frac_part, zero)) ? 1 : 0;
             }
-            else f.bits |= (((unsigned)1 << (pos - 24)) & octuplets) && (((unsigned)1 << (pos - 25)) & octuplets) ? 1 : 0;
         } else {                                                // добиваю дробные биты при наличии целых
-            printf("\nrounding frac with int\n\n");
             int block = 4;
             while (block) {
                 s21_mul(frac_part, eights_of_two, &frac_part);
@@ -182,15 +173,10 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
                 octuplets |= int_part.bits[0] << (--block * 8);
             }
             f.bits |= octuplets >> (9 + pos);
-            unsigned mask = (unsigned)1 << 31;
-            printf("OCT\n");
-            while (mask) {
-                printf(mask & octuplets ? "1" : "0");
-                mask >>= 1;
-            }
-            printf("\n");            
-            // unsigned mask = (unsigned)1 << (22 - pos);          // округление
-            // f.bits |= mask & octuplets ? 1 : 0;
+            unsigned mask = (unsigned)1 << (8 + pos);           // округление
+            bool first_extra_bit = mask & octuplets;
+            octuplets <<= (24 - pos);
+            f.bits |= first_extra_bit && (octuplets || s21_is_not_equal(frac_part, zero)) ? 1 : 0;
         }
     }
 
