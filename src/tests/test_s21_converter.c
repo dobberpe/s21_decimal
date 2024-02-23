@@ -162,6 +162,28 @@ END_TEST
 
 START_TEST(s21_dec_to_float_round_up_only_int) {
     // 695487777
+    s21_decimal dec_1 = {{0x29744d21, 0x0, 0x0, 0x0}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = 695487777;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
+
+START_TEST(s21_dec_to_float_round_up_only_int_neg) {
+    // -695487777
+    s21_decimal dec_1 = {{0x29744d21, 0x0, 0x0, 0x80000000}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = -695487777;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
+
+START_TEST(s21_dec_to_float_round_up_only_int_2) {
+    // 43467987
     s21_decimal dec_1 = {{0x29744d3, 0x0, 0x0, 0x0}};
     float res;
     int errno = s21_from_decimal_to_float(dec_1, &res);
@@ -171,8 +193,8 @@ START_TEST(s21_dec_to_float_round_up_only_int) {
 }
 END_TEST
 
-START_TEST(s21_dec_to_float_round_up_only_int_neg) {
-    // -695487777
+START_TEST(s21_dec_to_float_round_up_only_int_neg_2) {
+    // -43467987
     s21_decimal dec_1 = {{0x29744d3, 0x0, 0x0, 0x80000000}};
     float res;
     int errno = s21_from_decimal_to_float(dec_1, &res);
@@ -184,10 +206,10 @@ END_TEST
 
 START_TEST(s21_dec_to_float_round_down_only_int) {
     // 695487776
-    s21_decimal dec_1 = {{0x29744d2, 0x0, 0x0, 0x0}};
+    s21_decimal dec_1 = {{0x29744d20, 0x0, 0x0, 0x0}};
     float res;
     int errno = s21_from_decimal_to_float(dec_1, &res);
-    float check = 43467986;
+    float check = 695487776;
     ck_assert_float_eq(res, check);
     ck_assert_int_eq(errno, 0);
 }
@@ -195,10 +217,10 @@ END_TEST
 
 START_TEST(s21_dec_to_float_round_down_only_int_neg) {
     // -695487776
-    s21_decimal dec_1 = {{0x29744d2, 0x0, 0x0, 0x80000000}};
+    s21_decimal dec_1 = {{0x29744d20, 0x0, 0x0, 0x80000000}};
     float res;
     int errno = s21_from_decimal_to_float(dec_1, &res);
-    float check = -43467986;
+    float check = -695487776;
     ck_assert_float_eq(res, check);
     ck_assert_int_eq(errno, 0);
 }
@@ -221,6 +243,28 @@ START_TEST(s21_dec_to_float_round_up_only_frac_neg) {
     float res;
     int errno = s21_from_decimal_to_float(dec_1, &res);
     float check = -0.6477234698832035064697265625;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
+
+START_TEST(s21_dec_to_float_round_up_only_frac_2) {
+    // 0.64772348105907440185546875
+    s21_decimal dec_1 = {{0x9dc4987b, 0x6d3e294, 0x359414, 0x1a0000}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = 0.64772348105907440185546875;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
+
+START_TEST(s21_dec_to_float_round_up_only_frac_neg_2) {
+    // -0.64772348105907440185546875
+    s21_decimal dec_1 = {{0x9dc4987b, 0x6d3e294, 0x359414, 0x801a0000}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = -0.64772348105907440185546875;
     ck_assert_float_eq(res, check);
     ck_assert_int_eq(errno, 0);
 }
@@ -315,7 +359,6 @@ START_TEST(s21_dec_to_float_round_down_frac_to_int_neg) {
 END_TEST
 
 START_TEST(s21_dec_to_float_round_up_frac_with_int) {
-    printf("\nWITH\n\n");
     // 2716749.12890625
     s21_decimal dec_1 = {{0x3ead5f01, 0xf716, 0x0, 0x80000}};
     float res;
@@ -332,6 +375,28 @@ START_TEST(s21_dec_to_float_round_up_frac_with_int_neg) {
     float res;
     int errno = s21_from_decimal_to_float(dec_1, &res);
     float check = -2716749.12890625;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
+
+START_TEST(s21_dec_to_float_round_up_frac_with_int_2) {
+    // 2716749.1875
+    s21_decimal dec_1 = {{0x534f0723, 0x6, 0x0, 0x40000}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = 2716749.1875;
+    ck_assert_float_eq(res, check);
+    ck_assert_int_eq(errno, 0);
+}
+END_TEST
+
+START_TEST(s21_dec_to_float_round_up_frac_with_int_neg_2) {
+    // -2716749.1875
+    s21_decimal dec_1 = {{0x534f0723, 0x6, 0x0, 0x80040000}};
+    float res;
+    int errno = s21_from_decimal_to_float(dec_1, &res);
+    float check = -2716749.1875;
     ck_assert_float_eq(res, check);
     ck_assert_int_eq(errno, 0);
 }
@@ -569,10 +634,14 @@ Suite *s21_converter_cases(void) {
   tcase_add_test(tc, s21_dec_to_float_small_value_neg);
   tcase_add_test(tc, s21_dec_to_float_round_up_only_int);
   tcase_add_test(tc, s21_dec_to_float_round_up_only_int_neg);
+  tcase_add_test(tc, s21_dec_to_float_round_up_only_int_2);
+  tcase_add_test(tc, s21_dec_to_float_round_up_only_int_neg_2);
   tcase_add_test(tc, s21_dec_to_float_round_down_only_int);
   tcase_add_test(tc, s21_dec_to_float_round_down_only_int_neg);
   tcase_add_test(tc, s21_dec_to_float_round_up_only_frac);
   tcase_add_test(tc, s21_dec_to_float_round_up_only_frac_neg);
+  tcase_add_test(tc, s21_dec_to_float_round_up_only_frac_2);
+  tcase_add_test(tc, s21_dec_to_float_round_up_only_frac_neg_2);
   tcase_add_test(tc, s21_dec_to_float_round_down_only_frac);
   tcase_add_test(tc, s21_dec_to_float_round_down_only_frac_neg);
   tcase_add_test(tc, s21_dec_to_float_round_up_frac_to_int);
@@ -583,6 +652,8 @@ Suite *s21_converter_cases(void) {
   tcase_add_test(tc, s21_dec_to_float_round_down_frac_to_int_neg);
   tcase_add_test(tc, s21_dec_to_float_round_up_frac_with_int);
   tcase_add_test(tc, s21_dec_to_float_round_up_frac_with_int_neg);
+  tcase_add_test(tc, s21_dec_to_float_round_up_frac_with_int_2);
+  tcase_add_test(tc, s21_dec_to_float_round_up_frac_with_int_neg_2);
   tcase_add_test(tc, s21_dec_to_float_round_down_frac_with_int);
   tcase_add_test(tc, s21_dec_to_float_round_down_frac_with_int_neg);
     suite_add_tcase(c, tc);
