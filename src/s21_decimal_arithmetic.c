@@ -111,22 +111,22 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   if (!zero_check(value_1)) {
     int new_exp = get_exp(value_1) - get_exp(value_2), cont = 1;
     s21_decimal remainder = {{1, 0, 0, 0}};
+    bool rem_not_multiply = false;
     while (new_exp <= 28 && !overflow && !zero_check(remainder) && cont) {
       s21_decimal tmp = {0};
       remainder = mantiss_division(value_1, value_2, &tmp);
       while (zero_check(tmp) && new_exp <= 28 && !overflow) {
         if (!mantiss_mult_by_10(value_1, &tmp)) {
           value_1 = tmp;
-          if (!mantiss_mult_by_10(*result, &tmp))
-            *result = tmp;
-          else
-            break;
+          if (!mantiss_mult_by_10(*result, &tmp)) *result = tmp;
+          else break;
         } else {
           value_2 = mantiss_dev_by_10_with_round(value_2);
+          if (!mantiss_mult_by_10(*result, &tmp) && rem_not_multiply) *result = tmp;
         }
         new_exp++;
         if (zero_check(value_2)) overflow = 1;
-        remainder = mantiss_division(value_1, value_2, &tmp);
+        else remainder = mantiss_division(value_1, value_2, &tmp);
       }
       if (zero_check(tmp) && zero_check(*result) && new_exp >= 28) overflow = 1;
       if (!mantiss_sum(*result, tmp, &tmp)) *result = tmp;
@@ -136,12 +136,15 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
           !overflow && new_exp <= 28 && cont) {
         *result = tmp;
         new_exp++;
-        if (mantiss_mult_by_10(remainder, &tmp))
+        if (mantiss_mult_by_10(remainder, &tmp)) {
           new_exp--;
-        else
+          rem_not_multiply = false;
+        } else {
           remainder = tmp;
+          rem_not_multiply = true;
+        }
         value_1 = remainder;
-      }  
+      }
     }
     overflow = overflow ? overflow : exponent_eval(result, new_exp);
   }
@@ -152,11 +155,8 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_pow(s21_decimal value, int power, s21_decimal *result) {
     int res = 0;
+    clear_decimal(result);
     result->bits[0] = 1;
-    result->bits[1] = 0;
-    result->bits[2] = 0;
-    result->bits[3] = 0;
-
     while (power && !res) {
         if (power & 1) {
             res = power > 0 ? s21_mul(*result, value, result) : s21_div(*result, value, result);
@@ -167,12 +167,6 @@ int s21_pow(s21_decimal value, int power, s21_decimal *result) {
         }
     }
 
-    if (res) {
-        result->bits[0] = 0;
-        result->bits[1] = 0;
-        result->bits[2] = 0;
-        result->bits[3] = 0;
-    }
-
+    if (res) clear_decimal(result);
     return res;
 }
