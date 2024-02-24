@@ -142,8 +142,9 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
     if (!dst) res = 1;
     else for (int i = 0; i < 4; ++i) dst->bits[i] = 0;
     
-    if (isinf(src) || isnan(src) || fabsf(src) > 79228157791897854723898736640.0f || fabsf(src) < 0.00000000000000000000000000010000000031710768509710513471352647538147514756461109f) {
+    if (isinf(src) || isnan(src) || fabsf(src) > 79228157791897854723898736640.0f || (src != 0.0 && fabsf(src) < 0.00000000000000000000000000010000000031710768509710513471352647538147514756461109f)) {
         res = 1;
+        // printf("\ninf: %d\nnan: %d\n>: %d\n<: %d\n\n", isinf(src), isnan(src), fabsf(src) > 79228157791897854723898736640.0f, fabsf(src) < 0.00000000000000000000000000010000000031710768509710513471352647538147514756461109f);
     } else if (!res && src) {
         char f_str[32];
         sprintf(f_str, "%.6e", fabsf(src));
@@ -176,14 +177,14 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
             s21_pow(ten, exp, &ten);
             s21_mul(*dst, ten, dst);
         } else if (exp < 0) {
-            // if (exp < -28) {
-            //     set_exp(dst, 28);
-            //     exp += 28;
-            // }
-            // s21_decimal ten = {{0xa, 0x0, 0x0, 0x0}};
-            // s21_pow(ten, -exp, &ten);
-            // s21_div(*dst, ten, dst);
-            set_exp(dst, -exp);
+            if (exp < -28) {
+                set_exp(dst, 28);
+                exp += 28;
+            }
+            s21_decimal ten = {{0xa, 0x0, 0x0, 0x0}};
+            s21_pow(ten, -exp, &ten);
+            s21_div(*dst, ten, dst);
+            // set_exp(dst, -exp);
         }
     }
 
