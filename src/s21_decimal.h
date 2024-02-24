@@ -43,9 +43,8 @@ int s21_is_not_equal(s21_decimal, s21_decimal);
 // конверторы
 int s21_from_int_to_decimal(int src, s21_decimal *dst);
 int s21_from_float_to_decimal(float src, s21_decimal *dst);
-// void round_to_7_significant(s21_decimal *dst);
+int exp_from_str(char* f_str);
 int s21_from_decimal_to_int(s21_decimal src, int *dst);
-// int invalid_decimal(unsigned last_int);
 int s21_from_decimal_to_float(s21_decimal src, float *dst);
 
 // прочие функции

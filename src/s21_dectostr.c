@@ -11,21 +11,22 @@ char* dectostr(const s21_decimal dec) {
     if (negative || e) {
         if ((int)strlen(str) <= e) str = add_width(str, e - strlen(str) + 1, '0', true);
         int i = strlen(str) + negative + (bool)e;
+        char* tmp = str;
         str = (char*)realloc(str, (i + 1) * sizeof(char));
-        
-        str[i] = '\0';
-        if (e) {
-            while (e) {
-                --i;
-                str[i] = str[i - negative - (bool)e--];
+        if (!str) free(tmp);
+        else {
+            str[i] = '\0';
+            if (e) {
+                while (e) {
+                    --i;
+                    str[i] = str[i - negative - (bool)e--];
+                }
+                str[--i] = '.';
             }
-            str[--i] = '.';
-        }
-        if (negative) {
-            while (--i) {
-                str[i] = str[i - 1];
+            if (negative) {
+                while (--i) str[i] = str[i - 1];
+                str[i] = '-';
             }
-            str[i] = '-';
         }
     }
 
