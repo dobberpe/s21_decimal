@@ -7,8 +7,6 @@
 
 #include "../s21_decimal.h"
 
-
-
 Suite *s21_add_cases(void);
 Suite *s21_sub_cases(void);
 Suite *s21_mul_cases(void);

@@ -6,11 +6,10 @@ LIB_NAME = s21_decimal.a
 LIB_SRC = s21_decimal_arithmetic.c s21_decimal_converter.c s21_common.c s21_dectostr.c s21_decimal_compare.c s21_decimal_other.c
 LIB_OBJ = $(LIB_SRC:.c=.o)
 TEST_SRC = $(wildcard ./tests/*.c)
-# TEST_SRC = tests/s21_string_test.c tests/apply_format_test.c tests/s21_sprintf.c
 TEST_GCDA = $(LIB_SRC:.c=.gcda)
 TEST_OBJ = $(TEST_SRC:.c=.o)
 
-all: $(LIB_NAME) test
+all: $(LIB_NAME)
 
 test: $(TEST_OBJ) $(LIB_NAME)
 	$(CC) $(CFLAGS) $(TEST_OBJ) -o test -L. -l:$(LIB_NAME) $(TFLAGS)
