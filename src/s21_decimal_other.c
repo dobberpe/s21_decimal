@@ -2,7 +2,7 @@
 
 int s21_floor(s21_decimal value, s21_decimal *result) {
     int errno = 0;
-    if (decimal_valid(&value) || result == NULL) {
+    if (decimal_validation(&value) || result == NULL) {
         errno = 1;
     } else {
         int sign = get_sign(value);
@@ -29,7 +29,7 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
 
 int s21_round(s21_decimal value, s21_decimal *result) {
     int errno = 0;
-    if (decimal_valid(&value) || result == NULL) {
+    if (decimal_validation(&value) || result == NULL) {
         errno = 1;
     } else {
         int sign = get_sign(value);
@@ -57,7 +57,7 @@ int s21_round(s21_decimal value, s21_decimal *result) {
 
 int s21_truncate(s21_decimal value, s21_decimal *result) {
     int errno = 0;
-    if (decimal_valid(&value) || result == NULL) {
+    if (decimal_validation(&value) || result == NULL) {
         errno = 1;
     } else {
         int sign = get_sign(value);
@@ -76,7 +76,7 @@ int s21_truncate(s21_decimal value, s21_decimal *result) {
 
 int s21_negate(s21_decimal value, s21_decimal *result) {
     int errno = 0;
-    if (decimal_valid(&value) || result == NULL) {
+    if (decimal_validation(&value) || result == NULL) {
         errno = 1;
     } else {
         set_sign(&value, get_sign(value) ? 0 : 1);

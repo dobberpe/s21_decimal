@@ -177,8 +177,10 @@ int zero_check(s21_decimal dec) {
     return !(dec.bits[0] + dec.bits[1] + dec.bits[2]);
 }
 
-int decimal_valid(s21_decimal *dec) {
-    return (dec == NULL) || get_exp(*dec) > 28 || get_exp(*dec) < 0 || dec->bits[3] << 16;
+int decimal_validation(s21_decimal *dec) {
+    s21_bits_4 sign_n_exp = {dec->bits[3]};
+    sign_n_exp.bits[3] &= ~((char)1 << 7);
+    return (dec == NULL) || get_exp(*dec) > 28 || get_exp(*dec) < 0 || dec->bits[3] << 16 || sign_n_exp.bits[3];
 }
 
 int exponent_eval(s21_decimal *result, int new_exp) {

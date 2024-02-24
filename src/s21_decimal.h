@@ -43,8 +43,9 @@ int s21_is_not_equal(s21_decimal, s21_decimal);
 // конверторы
 int s21_from_int_to_decimal(int src, s21_decimal *dst);
 int s21_from_float_to_decimal(float src, s21_decimal *dst);
-void round_to_7_significant(s21_decimal *dst);
+// void round_to_7_significant(s21_decimal *dst);
 int s21_from_decimal_to_int(s21_decimal src, int *dst);
+// int invalid_decimal(unsigned last_int);
 int s21_from_decimal_to_float(s21_decimal src, float *dst);
 
 // прочие функции
@@ -81,7 +82,7 @@ s21_decimal mantiss_dev_by_10_with_round(s21_decimal dec);
 int mantiss_mult_by_10(s21_decimal dec, s21_decimal *result);
 void decimal_switch(s21_decimal *value_1, s21_decimal *value_2);
 int zero_check(s21_decimal dec);
-int decimal_valid(s21_decimal *dec);
+int decimal_validation(s21_decimal *dec);
 int exponent_eval(s21_decimal *result, int new_exp);
 int mantiss_round(s21_decimal *result, s21_decimal remainder, s21_decimal value_2);
 

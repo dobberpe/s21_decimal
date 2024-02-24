@@ -1,7 +1,7 @@
 #include "s21_decimal.h"
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-  if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL)
+  if (decimal_validation(&value_1) || decimal_validation(&value_2) || result == NULL)
     return 1;
   if (get_exp(value_1) > get_exp(value_2)) decimal_switch(&value_1, &value_2);
   int exp_1 = get_exp(value_1);
@@ -46,7 +46,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-  if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL)
+  if (decimal_validation(&value_1) || decimal_validation(&value_2) || result == NULL)
     return 1;
   set_sign(&value_2, !get_sign(value_2));
   int overflow = s21_add(value_1, value_2, result);
@@ -54,7 +54,7 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-  if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL)
+  if (decimal_validation(&value_1) || decimal_validation(&value_2) || result == NULL)
     return 1;
   if (mantiss_compare(value_1, value_2) == 1) decimal_switch(&value_1, &value_2);
   clear_decimal(result);
@@ -102,7 +102,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-  if (decimal_valid(&value_1) || decimal_valid(&value_2) || result == NULL)
+  if (decimal_validation(&value_1) || decimal_validation(&value_2) || result == NULL)
     return 1;
   if (zero_check(value_2)) return 3;
   clear_decimal(result);
