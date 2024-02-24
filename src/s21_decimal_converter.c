@@ -1,14 +1,18 @@
 #include "s21_decimal.h"
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst) { // протестировано работает
-    dst->bits[0] = (unsigned)abs(src);
-    dst->bits[1] = 0;
-    dst->bits[2] = 0;
-    dst->bits[3] = 0;
-    if (src < 0) set_sign(dst, 1);
-    set_exp(dst, 0);
+    int res = 0;
+    if (!dst) res = 1;
+    else {
+        dst->bits[0] = (unsigned) abs(src);
+        dst->bits[1] = 0;
+        dst->bits[2] = 0;
+        dst->bits[3] = 0;
+        if (src < 0) set_sign(dst, 1);
+        set_exp(dst, 0);
+    }
 
-    return 0;
+    return res;
 }
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {   // переводит, но пока без округления
