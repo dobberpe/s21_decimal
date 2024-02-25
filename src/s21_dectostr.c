@@ -101,8 +101,10 @@ char *stradd(char *l_str, char *r_str) {
   bool overflow = false;
 
   while (--k >= 0) {
-    res[k] = (i && j ? -48 : 0) + (i ? l_str[--i] : 0) + (j ? r_str[--j] : 0) +
+    res[k] = (i && j ? -48 : 0) + (i ? l_str[i - 1] : 0) + (j ? r_str[j - 1] : 0) +
              overflow;
+    if (i) --i;
+    if (j) --j;
     overflow = res[k] > 57;
     res[k] -= res[k] > 57 ? 10 : 0;
   }

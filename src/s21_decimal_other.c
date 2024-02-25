@@ -8,11 +8,11 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
     int sign = get_sign(value);
     int exp = get_exp(value);
     if (sign) {
-      s21_decimal one = {1, 0, 0, 0};
+      s21_decimal one = {{1, 0, 0, 0}};
       while (exp--) mantiss_mult_by_10(one, &one);
       s21_decimal rem = mantiss_division(value, one, &value);
       if (!zero_check(rem)) {
-        s21_decimal one1 = {1, 0, 0, 0};
+        s21_decimal one1 = {{1, 0, 0, 0}};
         mantiss_sum(value, one1, &value);
       }
       set_sign(&value, sign);
@@ -33,12 +33,12 @@ int s21_round(s21_decimal value, s21_decimal *result) {
     int sign = get_sign(value);
     int exp = get_exp(value);
     int i = exp;
-    s21_decimal one = {1, 0, 0, 0};
+    s21_decimal one = {{1, 0, 0, 0}};
     while (i--) mantiss_mult_by_10(one, &one);
     s21_decimal rem = mantiss_division(value, one, &value);
     if (!zero_check(rem)) {
       one = mantiss_dev_by_10_with_round(one);
-      s21_decimal five = {5, 0, 0, 0};
+      s21_decimal five = {{5, 0, 0, 0}};
       mantiss_multiply(one, five, &one);
       if (mantiss_compare(one, rem) != 1) {
         five.bits[0] = 1;
