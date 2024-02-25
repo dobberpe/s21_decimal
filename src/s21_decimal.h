@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <stdbool.h>
-#include <stdio.h>  // <<<<<<<<<<<<<<<<<<<<<<<<<==========================<<<< УДАЛИТЬ ПЕРЕД СДАЧЕЙ
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
